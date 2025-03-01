@@ -1,6 +1,0 @@
-fastapi
-uvicorn
-python-jose
-motor
-python-dotenv
-python-multipart
