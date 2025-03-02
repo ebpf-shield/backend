@@ -2,7 +2,7 @@ import datetime
 from enum import Enum
 from typing import Optional
 
-from beanie import PydanticObjectId
+from beanie import Document, PydanticObjectId
 from pydantic import BaseModel, Field
 
 
@@ -27,14 +27,21 @@ class Protocol(Enum, str):
 class FirewallRule(BaseModel):
     saddr: Optional[str]
     daddr: Optional[str]
-    sport: int
-    dport: int
+    sport: int = Field(ge=0, le=65535)
+    dport: int = Field(ge=0, le=65535)
     protocol: Optional[str]
-    action: Optional[Action] = Action.ACCEPT
-    chain: Optional[str] = Chain.INPUT
-    priority: int = 0
-    command: str
+    action: Optional[Action] = Field(default=Action.ACCEPT)
+    chain: Optional[Chain] = Field(default=Chain.INPUT)
+    priority: int = Field(ge=0, le=100000)
+    command: str = Field(max_length=255)
     comment: Optional[str]
     created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
     updated_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
     agent_guid: PydanticObjectId
+
+
+class FirewallRuleDocument(Document, FirewallRule):
+    pass
+
+    class Settings:
+        name = "rules"
