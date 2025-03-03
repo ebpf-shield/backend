@@ -6,18 +6,18 @@ from beanie import Document, PydanticObjectId
 from pydantic import BaseModel, Field
 
 
-class Action(Enum, str):
+class Action(str, Enum):
     ACCEPT = "ACCEPT"
     DROP = "DROP"
     REJECT = "REJECT"
 
 
-class Chain(Enum, str):
+class Chain(str, Enum):
     INPUT = "INPUT"
     OUTPUT = "OUTPUT"
 
 
-class Protocol(Enum, str):
+class Protocol(str, Enum):
     TCP = "TCP"
     UDP = "UDP"
     ICMP = "ICMP"
@@ -37,7 +37,7 @@ class FirewallRule(BaseModel):
     comment: Optional[str]
     created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
     updated_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
-    agent_guid: PydanticObjectId
+    agent_id: PydanticObjectId
 
 
 class FirewallRuleDocument(Document, FirewallRule):

@@ -2,7 +2,7 @@ from typing import Annotated
 from beanie import PydanticObjectId
 from fastapi import Depends
 
-from app.api.models.user_model import UserDocument
+from app.api.models.user_model import User, UserDocument
 
 
 class UserRepository:
@@ -11,6 +11,10 @@ class UserRepository:
 
     async def find_user_by_id(self, user_id: PydanticObjectId) -> None:
         raise NotImplementedError
+
+    async def create(self, user: User):
+        user_to_insert = UserDocument(**user.model_dump(by_alias=True))
+        return await user_to_insert.insert()
 
 
 def get_user_repository():

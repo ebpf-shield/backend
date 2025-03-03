@@ -11,4 +11,4 @@ COPY .env .env
 
 EXPOSE 80
 
-CMD ["hypercorn", "main:app", "--bind", "0.0.0.0:80"]
+ENTRYPOINT uvicorn main:app --host 0.0.0.0 --port 8080

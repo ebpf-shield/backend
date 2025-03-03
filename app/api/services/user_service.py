@@ -1,14 +1,21 @@
 from typing import Annotated
 
 from fastapi import Depends
-from app.api.repositories.users_repository import CommonUserRepository, UserRepository
+from app.api.models.user_model import User
+from app.api.repositories.user_repository import CommonUserRepository, UserRepository
 
 
 class UserService:
-    user_repository: UserRepository
+    _user_repository: UserRepository
 
     def __init__(self, user_repository: UserRepository):
-        self.user_repository = user_repository
+        self._user_repository = user_repository
+
+    async def get_user_by_email(self, email: str):
+        return await self._user_repository.find_user_by_email(email)
+
+    async def create(self, user: User):
+        return await self._user_repository.create(user)
 
 
 def get_user_service(user_repository: CommonUserRepository):

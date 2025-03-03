@@ -1,39 +1,49 @@
-from datetime import datetime, timedelta, timezone
-from re import L
-from typing import Annotated, Dict, Any, Optional
+from typing import Annotated, Any, Dict, Optional
+
+import bcrypt
 import jwt
-from fastapi import HTTPException, Depends
+from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
-from app.api.repositories.users_repository import CommonUserRepository, UserRepository
+from app.api.errors.email_already_exists_exception import EmailAlreadyExistsException
+from app.api.models.user_model import User, UserRegister
+from app.api.repositories.user_repository import CommonUserRepository, UserRepository
 from app.core.config import jwt_settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
 class AuthService:
-    user_repository: UserRepository
+    _user_repository: UserRepository
 
     def __init__(self, user_repository: UserRepository):
-        self.user_repository = user_repository
+        self._user_repository = user_repository
 
-    async def authenticate_user(
-        self, email: str, password: str
-    ) -> Optional[Dict[str, str]]:
-        user: Optional[Dict[str, str]] = fake_users_db.get(email)
-        if not user or user["password"] != password:
-            return None
-        return user
+    async def register_user(self, resisted_user: UserRegister):
+        existing_user = await self._user_repository.find_user_by_email(
+            resisted_user.email
+        )
+        if existing_user:
+            raise EmailAlreadyExistsException()
 
-    def create_access_token(self, data: Dict[str, Any]) -> str:
-        expire: datetime = datetime.now(timezone.utc) + timedelta(
-            minutes=jwt_settings.ACCESS_TOKEN_EXPIRE_MINUTES
+        hashed_password = bcrypt.hashpw(
+            resisted_user.password.encode("utf-8"), bcrypt.gensalt()
         )
-        to_encode: Dict[str, Any] = data.copy()
-        to_encode.update({"exp": expire})
-        return jwt.encode(
-            to_encode, jwt_settings.SECRET_KEY, algorithm=jwt_settings.ALGORITHM
+
+        user_to_create = User(
+            **resisted_user.model_copy(
+                update={"password": str(hashed_password)}
+            ).model_dump(by_alias=True)
         )
+        return await self._user_repository.create(user=user_to_create)
+
+    # async def authenticate_user(
+    #     self, email: str, password: str
+    # ) -> Optional[Dict[str, str]]:
+    #     user: Optional[Dict[str, str]] = fake_users_db.get(email)
+    #     if not user or user["password"] != password:
+    #         return None
+    #     return user
 
     def get_current_user(self, token: str = Depends(oauth2_scheme)) -> str:
         try:
