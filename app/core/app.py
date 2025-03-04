@@ -14,6 +14,7 @@ async def lifespan(app: FastAPI):
     setup_logger()
     await mongo_client_manager.start_async_mongo()
     yield
+    await mongo_client_manager.close_mongo()
 
 
 app = FastAPI(title="ebShield", lifespan=lifespan)

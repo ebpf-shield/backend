@@ -4,6 +4,8 @@ from beanie import init_beanie
 from fastapi import Depends
 from motor.motor_asyncio import AsyncIOMotorClient
 
+from app.api.models.rule_model import FirewallRuleDocument
+from app.api.models.user_model import UserDocument
 from app.core.config import settings
 
 
@@ -22,7 +24,7 @@ class MongoDBClientManager:
             self._client = AsyncIOMotorClient(settings.CONNECTION_STRING)
             await init_beanie(
                 self._client[settings.DB_NAME],
-                document_models=[],
+                document_models=[UserDocument, FirewallRuleDocument],
             )
             logger.info("Connected to mongoDB")
 
