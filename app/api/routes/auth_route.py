@@ -1,44 +1,50 @@
 from typing import Annotated
-import bcrypt
-from fastapi import APIRouter, Body, HTTPException, status
+from fastapi import APIRouter, Body
 from app.api.errors.conflict_exception import ConflictException
 from app.api.errors.email_already_exists_exception import EmailAlreadyExistsException
-from app.api.models.user_model import UserRegister
+from app.api.errors.no_user_with_email_exception import NoUserWithEmailException
+from app.api.errors.not_found_exception import NotFoundException
+from app.api.models.user_model import UserLogin, UserRegister
 from app.api.services.auth_service import (
     CommonAuthService,
 )
-from app.api.services.jwt_service import CommonJwtService, JwtService
+from app.api.services.jwt_service import CommonJwtService
 
 router = APIRouter()
 
 
-@router.post("/register")
+@router.post("/register", description="Register a new user")
 async def register(
     user: Annotated[UserRegister, Body()],
     auth_service: CommonAuthService,
     jwt_service: CommonJwtService,
 ):
-    # Create the user in the db if the email has not been used.
-    # If it was used return the appropriate error message.
     try:
         inserted_user = await auth_service.register_user(resisted_user=user)
     except EmailAlreadyExistsException as e:
         raise ConflictException(e.message)
 
-    # Generate a JWT token and return it.
     token = await jwt_service.generate_token(
         data={"email": inserted_user.email, "id": str(inserted_user.id)}
     )
-    # Placeholder for user registration logic
-    return {"token": token}
+    return {"access_token": token, "token_type": "bearer"}
 
 
-# @router.post("/login")
-# def login(form_data: OAuth2PasswordRequestForm = Depends()):
-#     user = authenticate_user(form_data.username, form_data.password)
-#     if not user:
-#         raise HTTPException(
-#             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
-#         )
-#     access_token = create_access_token({"sub": user["email"]})
-#     return {"access_token": access_token, "token_type": "bearer"}
+@router.post("/login", description="Login user")
+async def login(
+    user_to_login: Annotated[UserLogin, Body()],
+    auth_service: CommonAuthService,
+    jwt_service: CommonJwtService,
+):
+    try:
+        user = await auth_service.login_user(user_to_login)
+    except NoUserWithEmailException as e:
+        raise NotFoundException(e.message)
+
+    token = await jwt_service.generate_token({"email": user.email, "id": str(user.id)})
+    return {"access_token": token, "token_type": "bearer"}
+
+
+@router.post("/token", description="Get token")
+def token():
+    return {"access_token": "fake_token", "token_type": "bearer"}

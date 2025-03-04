@@ -1,16 +1,15 @@
-from typing import Annotated, Any, Dict, Optional
+from typing import Annotated
 
 import bcrypt
-import jwt
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 
 from app.api.errors.email_already_exists_exception import EmailAlreadyExistsException
-from app.api.models.user_model import User, UserRegister
+from app.api.errors.no_user_with_email_exception import NoUserWithEmailException
+from app.api.models.user_model import User, UserLogin, UserRegister
 from app.api.repositories.user_repository import CommonUserRepository, UserRepository
-from app.core.config import jwt_settings
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 
 class AuthService:
@@ -37,26 +36,12 @@ class AuthService:
         )
         return await self._user_repository.create(user=user_to_create)
 
-    # async def authenticate_user(
-    #     self, email: str, password: str
-    # ) -> Optional[Dict[str, str]]:
-    #     user: Optional[Dict[str, str]] = fake_users_db.get(email)
-    #     if not user or user["password"] != password:
-    #         return None
-    #     return user
+    async def login_user(self, user_to_login: UserLogin):
+        user = await self._user_repository.find_user_by_email(user_to_login.email)
+        if not user:
+            raise NoUserWithEmailException
 
-    def get_current_user(self, token: str = Depends(oauth2_scheme)) -> str:
-        try:
-            payload = jwt.decode(
-                token, jwt_settings.SECRET_KEY, algorithms=[jwt_settings.ALGORITHM]
-            )
-
-            email: Optional[str] = payload.get("sub")
-            if email is None:
-                raise HTTPException(status_code=401, detail="Invalid token")
-            return email
-        except jwt.PyJWTError:
-            raise HTTPException(status_code=401, detail="Invalid or expired token")
+        return user
 
 
 def get_auth_service(user_repository: CommonUserRepository):
