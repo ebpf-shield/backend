@@ -16,7 +16,7 @@ class JwtService:
             minutes=jwt_settings.ACCESS_TOKEN_EXPIRE_MINUTES
         )
 
-        data.update({"exp": expire, "nbf": datetime.now()})
+        data.update({"exp": expire, "nbf": datetime.datetime.now()})
 
         return jwt.encode(
             data, jwt_settings.SECRET_KEY, algorithm=jwt_settings.ALGORITHM
