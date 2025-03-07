@@ -11,7 +11,7 @@ from app.api.services.auth_service import (
 )
 from app.api.services.jwt_service import CommonJwtService
 
-router = APIRouter()
+router = APIRouter(tags=["auth"])
 
 
 @router.post("/register", description="Register a new user")
