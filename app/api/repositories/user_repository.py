@@ -10,7 +10,7 @@ class UserRepository:
         return await UserDocument.find_one({"email": email})
 
     async def find_user_by_id(self, user_id: PydanticObjectId) -> None:
-        raise NotImplementedError
+        return await UserDocument.get(user_id)
 
     async def create(self, user: User):
         user_to_insert = UserDocument(**user.model_dump(by_alias=True))

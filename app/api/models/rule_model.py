@@ -33,8 +33,9 @@ class FirewallRule(BaseModel):
     updated_at: datetime.datetime = Field(
         default_factory=datetime.datetime.now, alias="updatedAt"
     )
-    agent_id: PydanticObjectId
     process_id: PydanticObjectId
+    # I'm not sure we need these field
+    agent_id: PydanticObjectId
 
 
 class FirewallRuleDocument(Document, FirewallRule):
