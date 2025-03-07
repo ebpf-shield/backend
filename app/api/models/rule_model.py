@@ -17,7 +17,7 @@ class Chain(str, Enum):
     OUTPUT = "OUTPUT"
 
 
-class FirewallRule(BaseModel):
+class Rule(BaseModel):
     saddr: Optional[IPvAnyAddress]
     daddr: Optional[IPvAnyAddress]
     sport: int = Field(ge=0, le=65535)
@@ -38,7 +38,7 @@ class FirewallRule(BaseModel):
     agent_id: PydanticObjectId
 
 
-class FirewallRuleDocument(Document, FirewallRule):
+class RuleDocument(Document, Rule):
     pass
 
     class Settings:
