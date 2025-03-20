@@ -18,6 +18,7 @@ class Chain(str, Enum):
 
 
 class Rule(BaseModel):
+    _id: Optional[PydanticObjectId] = Field(alias="_id")
     saddr: Optional[IPvAnyAddress]
     daddr: Optional[IPvAnyAddress]
     sport: int = Field(ge=0, le=65535)

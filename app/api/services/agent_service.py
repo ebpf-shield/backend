@@ -1,5 +1,6 @@
 from typing import Annotated
 
+from beanie import PydanticObjectId
 from fastapi import Depends
 
 from app.api.models.agent_model import Agent
@@ -14,6 +15,17 @@ class AgentService:
 
     async def create(self, agent: Agent):
         return await self._agent_repository.create(agent)
+
+    async def find_all_agents(self):
+        return await self._agent_repository.find_all_agents()
+
+    async def find_agent_by_id(self, agent_id: PydanticObjectId):
+        return await self._agent_repository.find_agent_by_id(agent_id)
+
+    async def update_rules(
+        self, agent_id: PydanticObjectId, rules: list[PydanticObjectId]
+    ):
+        return await self._agent_repository.update_rules(agent_id, rules)
 
 
 def get_agent_service(agent_repository: CommonAgentRepository):
