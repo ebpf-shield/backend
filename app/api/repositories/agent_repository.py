@@ -24,7 +24,7 @@ class AgentRepository:
     async def update_rules(
         self, agent_id: PydanticObjectId, rules: list[PydanticObjectId]
     ):
-        return await AgentDocument.find_one({AgentDocument._id: agent_id}).update_one(
+        return await AgentDocument.find_one({AgentDocument.id: agent_id}).update_one(
             Set({AgentDocument.rules: rules})
         )
 

@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 
 class Agent(BaseModel):
-    _id: Optional[PydanticObjectId] = Field(alias="_id")
+    id: Optional[PydanticObjectId] = Field(alias="_id")
     name: str
     created_at: datetime.datetime = Field(alias="createdAt")
     updated_at: datetime.datetime = Field(
