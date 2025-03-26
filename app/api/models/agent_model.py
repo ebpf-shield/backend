@@ -5,14 +5,16 @@ from pydantic import BaseModel, Field
 
 
 class Agent(BaseModel):
-    id: Optional[PydanticObjectId] = Field(alias="_id")
+    id: Optional[PydanticObjectId] = Field(alias="_id", default=None)
     name: str
-    created_at: datetime.datetime = Field(alias="createdAt")
+    created_at: datetime.datetime = Field(
+        alias="createdAt", default_factory=datetime.datetime.now
+    )
     updated_at: datetime.datetime = Field(
         alias="updatedAt", default_factory=datetime.datetime.now
     )
-    rules: Optional[list[PydanticObjectId]] = None
-    processes: Optional[list[PydanticObjectId]] = None
+    rules: list[PydanticObjectId] = Field(default=[])
+    processes: list[PydanticObjectId] = Field(default=[])
 
 
 class AgentDocument(Document, Agent):
