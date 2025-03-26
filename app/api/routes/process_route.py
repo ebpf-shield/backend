@@ -14,7 +14,7 @@ router = APIRouter(tags=["processes"])
     description="Get all processes by agent id",
     response_model=list[ProcessDocument],
 )
-async def get_all_processes_by_agent_id(
+async def find_all_processes_by_agent_id(
     agent_id: Annotated[PydanticObjectId, Path()], process_service: CommonProcessService
 ):
-    return await process_service.get_all_processes_by_agent_id(agent_id)
+    return await process_service.find_all_processes_by_agent_id(agent_id)

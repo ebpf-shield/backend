@@ -14,7 +14,7 @@ class ProcessService:
         self._process_repository = process_repository
 
     async def find_all_processes_by_agent_id(self, agent_id: PydanticObjectId):
-        return await self._process_repository.find_all_processes_by_agent_id(agent_id)
+        return await self._process_repository.get_all_processes_by_agent_id(agent_id)
 
 
 def get_process_service(process_repository: CommonProcessRepository):
