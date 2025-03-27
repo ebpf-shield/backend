@@ -25,12 +25,3 @@ async def get_agent_by_id(
     agent_id: Annotated[PydanticObjectId, Path()], agent_service: CommonAgentService
 ):
     return await agent_service.find_agent_by_id(agent_id)
-
-
-@router.put("/{agent_id}/rules", description="Update agent rules")
-async def update_agent_rules(
-    agent_id: Annotated[PydanticObjectId, Path()],
-    rules: Annotated[list[PydanticObjectId], Body()],
-    agent_service: CommonAgentService,
-):
-    return await agent_service.update_rules(agent_id, rules)

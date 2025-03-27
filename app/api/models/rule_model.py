@@ -35,8 +35,6 @@ class Rule(BaseModel):
         default_factory=datetime.datetime.now, alias="updatedAt"
     )
     process_id: PydanticObjectId
-    # I'm not sure we need these field
-    agent_id: PydanticObjectId
 
 
 class RuleDocument(Document, Rule):

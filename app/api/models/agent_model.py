@@ -13,8 +13,6 @@ class Agent(BaseModel):
     updated_at: datetime.datetime = Field(
         alias="updatedAt", default_factory=datetime.datetime.now
     )
-    rules: list[PydanticObjectId] = Field(default=[])
-    processes: list[PydanticObjectId] = Field(default=[])
 
 
 class AgentDocument(Document, Agent):

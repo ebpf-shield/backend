@@ -6,8 +6,8 @@ from pydantic import BaseModel, Field
 class Process(BaseModel):
     id: Optional[PydanticObjectId] = Field(alias="_id")
     command: str = Field(max_length=255)
-    agent_id: PydanticObjectId = Field(alias="agentId")
     pid: int = Field(ge=0)
+    agent_id: PydanticObjectId = Field(alias="agentId")
 
 
 class ProcessDocument(Document, Process):

@@ -22,11 +22,6 @@ class AgentService:
     async def find_agent_by_id(self, agent_id: PydanticObjectId):
         return await self._agent_repository.find_agent_by_id(agent_id)
 
-    async def update_rules(
-        self, agent_id: PydanticObjectId, rules: list[PydanticObjectId]
-    ):
-        return await self._agent_repository.update_rules(agent_id, rules)
-
 
 def get_agent_service(agent_repository: CommonAgentRepository):
     return AgentService(agent_repository=agent_repository)
