@@ -6,7 +6,7 @@ from app.api.models.rule_model import RuleDocument
 
 
 class Process(BaseModel):
-    id: Optional[PydanticObjectId] = Field(alias="_id")
+    id: Optional[PydanticObjectId] = Field(alias="_id", default=None)
     command: str = Field(max_length=255)
     pid: int = Field(ge=0)
     agent_id: PydanticObjectId = Field(alias="agentId")
