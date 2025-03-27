@@ -20,9 +20,7 @@ class AuthService:
         self._user_repository = user_repository
 
     async def register_user(self, resisted_user: UserRegister):
-        existing_user = await self._user_repository.find_user_by_email(
-            resisted_user.email
-        )
+        existing_user = await self._user_repository.get_by_email(resisted_user.email)
         if existing_user:
             raise EmailAlreadyExistsException()
 
@@ -38,7 +36,7 @@ class AuthService:
         return await self._user_repository.create(user=user_to_create)
 
     async def login_user(self, user_to_login: UserLogin):
-        user = await self._user_repository.find_user_by_email(user_to_login.email)
+        user = await self._user_repository.get_by_email(user_to_login.email)
         if not user:
             raise NoUserWithEmailException
 

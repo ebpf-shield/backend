@@ -6,10 +6,10 @@ from app.api.models.user_model import User, UserDocument
 
 
 class UserRepository:
-    async def find_user_by_email(self, email: str):
+    async def get_by_email(self, email: str):
         return await UserDocument.find_one({"email": email})
 
-    async def find_user_by_id(self, user_id: PydanticObjectId) -> None:
+    async def get_by_id(self, user_id: PydanticObjectId) -> None:
         return await UserDocument.get(user_id)
 
     async def create(self, user: User):

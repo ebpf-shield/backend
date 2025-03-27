@@ -34,7 +34,7 @@ class Rule(BaseModel):
     updated_at: datetime.datetime = Field(
         default_factory=datetime.datetime.now, alias="updatedAt"
     )
-    process_id: PydanticObjectId
+    process_id: PydanticObjectId = Field(alias="processId")
 
 
 class RuleDocument(Document, Rule):

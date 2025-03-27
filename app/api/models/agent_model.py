@@ -3,6 +3,8 @@ from typing import Optional
 from beanie import Document, PydanticObjectId
 from pydantic import BaseModel, Field
 
+from app.api.models.process_model import ProcessDocument
+
 
 class Agent(BaseModel):
     id: Optional[PydanticObjectId] = Field(alias="_id", default=None)
@@ -20,3 +22,7 @@ class AgentDocument(Document, Agent):
 
     class Settings:
         name = "agents"
+
+
+class AgentWithProcesses(Agent):
+    processes: list[ProcessDocument] = Field(alias="processes", default=[])

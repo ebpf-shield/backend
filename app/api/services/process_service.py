@@ -1,6 +1,7 @@
 from typing import Annotated
 from beanie import PydanticObjectId
 from fastapi import Depends
+from app.api.models.process_model import Process
 from app.api.repositories.process_repository import (
     CommonProcessRepository,
     ProcessRepository,
@@ -14,7 +15,16 @@ class ProcessService:
         self._process_repository = process_repository
 
     async def find_all_processes_by_agent_id(self, agent_id: PydanticObjectId):
-        return await self._process_repository.get_all_processes_by_agent_id(agent_id)
+        return await self._process_repository.get_all_agent_id(agent_id)
+
+    async def find_by_id(self, process_id: PydanticObjectId):
+        return await self._process_repository.get_by_id(process_id)
+
+    async def create(self, process: Process):
+        return await self._process_repository.create(process)
+
+    async def update(self, process: Process):
+        return await self._process_repository.update(process)
 
 
 def get_process_service(process_repository: CommonProcessRepository):

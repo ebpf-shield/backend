@@ -2,6 +2,8 @@ from typing import Optional
 from beanie import Document, PydanticObjectId
 from pydantic import BaseModel, Field
 
+from app.api.models.rule_model import RuleDocument
+
 
 class Process(BaseModel):
     id: Optional[PydanticObjectId] = Field(alias="_id")
@@ -15,3 +17,7 @@ class ProcessDocument(Document, Process):
 
     class Settings:
         name = "processes"
+
+
+class ProcessWithRules(Process):
+    rules: list[RuleDocument] = Field(alias="rules", default=[])
