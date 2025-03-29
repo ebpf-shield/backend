@@ -6,13 +6,13 @@ from beanie import Document, PydanticObjectId
 from pydantic import BaseModel, Field, IPvAnyAddress
 
 
-class Action(str, Enum):
+class RuleAction(str, Enum):
     ACCEPT = "ACCEPT"
     DROP = "DROP"
     REJECT = "REJECT"
 
 
-class Chain(str, Enum):
+class RuleChain(str, Enum):
     INPUT = "INPUT"
     OUTPUT = "OUTPUT"
 
@@ -24,8 +24,8 @@ class Rule(BaseModel):
     sport: int = Field(ge=0, le=65535)
     dport: int = Field(ge=0, le=65535)
     protocol: Optional[str]
-    action: Optional[Action] = Field(default=Action.ACCEPT)
-    chain: Optional[Chain] = Field(default=Chain.INPUT)
+    action: Optional[RuleAction] = Field(default=RuleAction.ACCEPT)
+    chain: Optional[RuleChain] = Field(default=RuleChain.INPUT)
     priority: int = Field(ge=0, le=100000)
     comment: Optional[str] = Field(max_length=255)
     created_at: datetime.datetime = Field(

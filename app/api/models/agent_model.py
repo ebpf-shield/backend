@@ -15,6 +15,7 @@ class Agent(BaseModel):
     updated_at: datetime.datetime = Field(
         alias="updatedAt", default_factory=datetime.datetime.now
     )
+    online: bool = False
 
 
 class AgentDocument(Document, Agent):
