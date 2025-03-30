@@ -52,6 +52,12 @@ class MongoDBClientManager:
             logger.error("Unable to close connection to MongoDB")
             raise _e
 
+    async def get_session(self):
+        if self._client is None:
+            raise Exception("MongoDB client is not initialized.")
+
+        return await self._client.start_session()
+
     def get_mongo_client(self) -> AsyncIOMotorClient:
         return self.mongo_client
 

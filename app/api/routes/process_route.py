@@ -1,9 +1,11 @@
 from typing import Annotated
 from beanie import PydanticObjectId
 from fastapi import APIRouter, Body, Path
+from fastapi.responses import JSONResponse
 
 from app.api.errors.not_found_exception import NotFoundException
 from app.api.models.process_model import Process, ProcessDocument, ProcessWithoutAgentId
+from app.api.services.agent_service import CommonAgentService
 from app.api.services.process_service import CommonProcessService
 
 
@@ -56,24 +58,38 @@ async def update_many_by_agent_id(
     agent_id: Annotated[PydanticObjectId, Path(description="Agent id")],
     processes: Annotated[list[ProcessWithoutAgentId], Body()],
     process_service: CommonProcessService,
-    agent_service: CommonProcessService,
+    agent_service: CommonAgentService,
 ):
     agent = await agent_service.find_by_id(agent_id)
     if not agent:
         raise NotFoundException(detail=f"Agent with id {agent_id} not found")
 
-    processes_with_agent_id = [
-        Process(**process.model_dump(by_alias=True), agent_id=agent_id)
-        for process in processes
-    ]
+    processes_with_agent_id = []
+    for process in processes:
+        new_process = Process(**process.model_dump(by_alias=True))
+        new_process.agent_id = agent_id
+        processes_with_agent_id.append(new_process)
+
     res = await process_service.update_many_by_agent_id(
         agent_id, processes_with_agent_id
     )
 
-    return {
-        "deleted_count": res[0].deleted_count,
-        "inserted_count": len(res[1].inserted_ids),
-    }
+    if len(res) == 2:
+        return {
+            "modified_count": res[0].modified_count,
+            "inserted_count": 0,
+        }
+
+    if len(res) == 3:
+        return {
+            "modified_count": res[1].modified_count,
+            "inserted_count": len(res[0].inserted_ids),
+        }
+
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "An error occurred while updating processes."},
+    )
 
 
 @router.get(

@@ -1,3 +1,4 @@
+import asyncio
 from typing import Annotated
 from beanie import PydanticObjectId
 from fastapi import Depends
@@ -6,6 +7,8 @@ from app.api.repositories.process_repository import (
     CommonProcessRepository,
     ProcessRepository,
 )
+
+from pymongo.results import UpdateResult, InsertManyResult
 
 
 class ProcessService:
@@ -37,10 +40,49 @@ class ProcessService:
 
     async def update_many_by_agent_id(
         self, agent_id: PydanticObjectId, processes: list[Process]
+    ) -> (
+        tuple[UpdateResult, UpdateResult]
+        | tuple[InsertManyResult, UpdateResult, UpdateResult]
     ):
-        return await self._process_repository.update_many_by_agent_id(
-            agent_id, processes
-        )
+        async with await self._process_repository._client.start_session() as session:
+            async with session.start_transaction():
+                new_processes_commands = [process.command for process in processes]
+                exsiting_processes_by_commands = await self._process_repository.get_existing_by_agent_id_and_commands(
+                    agent_id, new_processes_commands, session=session
+                )
+
+                existing_processes_commands = [
+                    process.command for process in exsiting_processes_by_commands
+                ]
+
+                non_exsisting_processes = [
+                    process
+                    for process in processes
+                    if process.command not in existing_processes_commands
+                ]
+
+                update_stop_task = (
+                    self._process_repository.update_status_to_stopped_by_agent_id(
+                        agent_id, existing_processes_commands, session=session
+                    )
+                )
+
+                update_running_task = (
+                    self._process_repository.update_status_to_running_for_agent_id(
+                        agent_id, existing_processes_commands, session=session
+                    )
+                )
+
+                if not non_exsisting_processes:
+                    return await asyncio.gather(update_stop_task, update_running_task)
+
+                insert_many_task = self._process_repository.create_many(
+                    non_exsisting_processes, session=session
+                )
+
+                return await asyncio.gather(
+                    insert_many_task, update_stop_task, update_running_task
+                )
 
 
 def get_process_service(process_repository: CommonProcessRepository):
