@@ -1,4 +1,3 @@
-import asyncio
 from typing import Annotated
 
 from beanie import PydanticObjectId
@@ -31,18 +30,17 @@ class AgentService:
     async def find_by_id(
         self, agent_id: PydanticObjectId, embed_processes: bool = False
     ):
-        if embed_processes:
-            processes_task = self._process_repository.get_all_agent_id(agent_id)
-            agent_task = self._agent_repository.get_by_id(agent_id)
+        agent = await self._agent_repository.get_by_id(agent_id)
+        if embed_processes and agent:
+            processes = await self._process_repository.get_all_agent_id(agent_id)
 
-            agent, processes = await asyncio.gather(agent_task, processes_task)
             agent_with_processes = AgentWithProcesses(
                 **agent.model_dump(by_alias=True), processes=processes
             )
 
             return agent_with_processes
 
-        return await self._agent_repository.get_by_id(agent_id)
+        return agent
 
     async def update(self, agent: Agent):
         return await self._agent_repository.update(agent)
