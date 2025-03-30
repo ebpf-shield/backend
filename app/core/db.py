@@ -4,7 +4,9 @@ from beanie import init_beanie
 from fastapi import Depends
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from app.api.models.rule_model import FirewallRuleDocument
+from app.api.models.agent_model import AgentDocument
+from app.api.models.process_model import ProcessDocument
+from app.api.models.rule_model import RuleDocument
 from app.api.models.user_model import UserDocument
 from app.core.config import settings
 
@@ -24,11 +26,18 @@ class MongoDBClientManager:
             self._client = AsyncIOMotorClient(settings.CONNECTION_STRING)
             await init_beanie(
                 self._client[settings.DB_NAME],
-                document_models=[UserDocument, FirewallRuleDocument],
+                document_models=[
+                    UserDocument,
+                    RuleDocument,
+                    AgentDocument,
+                    ProcessDocument,
+                    RuleDocument,
+                ],
             )
             logger.info("Connected to mongoDB")
 
         except Exception as _e:
+            print(_e)
             logger.error("Unable to connect to mongoDB")
             print("Error")
 
@@ -42,6 +51,12 @@ class MongoDBClientManager:
         except Exception as _e:
             logger.error("Unable to close connection to MongoDB")
             raise _e
+
+    async def get_session(self):
+        if self._client is None:
+            raise Exception("MongoDB client is not initialized.")
+
+        return await self._client.start_session()
 
     def get_mongo_client(self) -> AsyncIOMotorClient:
         return self.mongo_client

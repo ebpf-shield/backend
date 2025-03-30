@@ -1,8 +1,10 @@
-from beanie import Document
+from typing import Optional
+from beanie import Document, PydanticObjectId
 from pydantic import BaseModel, EmailStr, Field
 
 
 class User(BaseModel):
+    id: Optional[PydanticObjectId] = Field(alias="_id")
     name: str
     email: EmailStr
     password: str

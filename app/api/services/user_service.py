@@ -12,7 +12,7 @@ class UserService:
         self._user_repository = user_repository
 
     async def get_user_by_email(self, email: str):
-        return await self._user_repository.find_user_by_email(email)
+        return await self._user_repository.get_by_email(email)
 
     async def create(self, user: User):
         return await self._user_repository.create(user)
