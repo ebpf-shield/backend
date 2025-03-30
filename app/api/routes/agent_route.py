@@ -11,8 +11,11 @@ router = APIRouter(tags=["agents"])
 
 
 @router.get("", description="Get all agents")
-async def find_all(agent_service: CommonAgentService):
-    return await agent_service.find_all_agents()
+async def find_all(
+    agent_service: CommonAgentService,
+    embed_query: Annotated[AgentEmbedQuery, Query()],
+):
+    return await agent_service.find_all(embed_query.embed_processes)
 
 
 @router.post("", description="Create a new agent")
