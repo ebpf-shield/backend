@@ -26,6 +26,22 @@ class ProcessService:
     async def update(self, process: Process):
         return await self._process_repository.update(process)
 
+    async def find_by_agent_with_rules_grouped_by_command(
+        self, agent_id: PydanticObjectId
+    ):
+        return (
+            await self._process_repository.get_by_agent_with_rules_grouped_by_command(
+                agent_id
+            )
+        )
+
+    async def update_many_by_agent_id(
+        self, agent_id: PydanticObjectId, processes: list[Process]
+    ):
+        return await self._process_repository.update_many_by_agent_id(
+            agent_id, processes
+        )
+
 
 def get_process_service(process_repository: CommonProcessRepository):
     return ProcessService(process_repository=process_repository)

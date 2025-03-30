@@ -2,6 +2,7 @@ from typing import Annotated
 from beanie import PydanticObjectId
 from fastapi import APIRouter, Body, Path
 
+from app.api.errors.not_found_exception import NotFoundException
 from app.api.models.rule_model import Rule
 from app.api.services.rule_service import CommonRuleService
 
@@ -31,7 +32,11 @@ async def find_by_id(
     rule_id: Annotated[PydanticObjectId, Path(description="Rule id")],
     rule_service: CommonRuleService,
 ):
-    return await rule_service.find_by_id(rule_id)
+    rule = await rule_service.find_by_id(rule_id)
+    if not rule:
+        raise NotFoundException(detail=f"Rule with id {rule_id} not found")
+
+    return rule
 
 
 @router.patch(

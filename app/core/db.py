@@ -37,6 +37,7 @@ class MongoDBClientManager:
             logger.info("Connected to mongoDB")
 
         except Exception as _e:
+            print(_e)
             logger.error("Unable to connect to mongoDB")
             print("Error")
 

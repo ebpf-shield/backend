@@ -2,7 +2,7 @@ import datetime
 from enum import Enum
 from typing import Optional
 from beanie import Document, PydanticObjectId
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.api.models.rule_model import RuleDocument
 
@@ -14,6 +14,12 @@ class ProcessStatus(str, Enum):
 
 
 class Process(BaseModel):
+    model_config = ConfigDict(
+        validate_by_name=True,
+        serialize_by_alias=True,
+        validate_by_alias=True,
+    )
+
     id: Optional[PydanticObjectId] = Field(alias="_id", default=None)
     command: str = Field(max_length=255)
     pid: int = Field(ge=0)
@@ -33,3 +39,12 @@ class ProcessDocument(Document, Process):
 
 class ProcessWithRules(Process):
     rules: list[RuleDocument] = Field(alias="rules", default=[])
+
+
+class ProcessByNameWithRules(BaseModel):
+    command: str = Field(max_length=255)
+    rules: list[RuleDocument] = Field(alias="rules", default=[])
+
+
+class ProcessWithoutAgentId(Process):
+    agent_id: Optional[PydanticObjectId] = Field(alias="agentId", default=None)

@@ -1,10 +1,10 @@
 from typing import Annotated
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, HTTPException
+from fastapi import status
 from app.api.errors.conflict_exception import ConflictException
 from app.api.errors.email_already_exists_exception import EmailAlreadyExistsException
 from app.api.errors.invalid_password_exception import InvalidPasswordException
 from app.api.errors.no_user_with_email_exception import NoUserWithEmailException
-from app.api.errors.not_found_exception import NotFoundException
 from app.api.models.user_model import UserLogin, UserRegister
 from app.api.services.auth_service import (
     CommonAuthService,
@@ -40,7 +40,9 @@ async def login(
     try:
         user = await auth_service.login_user(user_to_login)
     except (NoUserWithEmailException, InvalidPasswordException) as _e:
-        raise NotFoundException("Invalid email or password")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid email or password"
+        )
 
     token = await jwt_service.generate_token({"email": user.email, "id": str(user.id)})
     return {"access_token": token, "token_type": "bearer"}
