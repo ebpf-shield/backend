@@ -29,9 +29,8 @@ class AgentService:
             agents = await self._agent_repository.get_all_with_processes()
             return agents
 
-        else:
-            agents = await self._agent_repository.get_all()
-            return agents
+        agents = await self._agent_repository.get_all()
+        return agents
 
     async def find_by_id(
         self, agent_id: PydanticObjectId, embed_processes: bool = False
@@ -40,9 +39,8 @@ class AgentService:
             agent = await self._agent_repository.get_by_id_with_processes(agent_id)
             return agent
 
-        else:
-            agent = await self._agent_repository.get_by_id(agent_id)
-            return agent
+        agent = await self._agent_repository.get_by_id(agent_id)
+        return agent
 
     async def update(self, agent: Agent):
         return await self._agent_repository.update(agent)
