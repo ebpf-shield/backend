@@ -20,7 +20,10 @@ class ProcessService:
     async def find_all_processes_by_agent_id(self, agent_id: PydanticObjectId):
         return await self._process_repository.get_all_agent_id(agent_id)
 
-    async def find_by_id(self, process_id: PydanticObjectId):
+    async def find_by_id(self, process_id: PydanticObjectId, embed_rules: bool = False):
+        if embed_rules:
+            return await self._process_repository.get_by_id_with_rules(process_id)
+
         return await self._process_repository.get_by_id(process_id)
 
     async def create(self, process: Process):

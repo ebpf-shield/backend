@@ -11,6 +11,7 @@ from app.api.models.process_model import (
     ProcessByNameWithRules,
     ProcessDocument,
     ProcessStatus,
+    ProcessWithRules,
 )
 from app.core.db import CommonMongoClient
 
@@ -28,6 +29,24 @@ class ProcessRepository:
 
     async def get_by_id(self, process_id: PydanticObjectId):
         return await ProcessDocument.get(process_id)
+
+    async def get_by_id_with_rules(self, process_id: PydanticObjectId):
+        [process] = await ProcessDocument.aggregate(
+            [
+                {"$match": {"_id": process_id}},
+                {
+                    "$lookup": {
+                        "from": "rules",
+                        "localField": "_id",
+                        "foreignField": "processId",
+                        "as": "rules",
+                    }
+                },
+            ],
+            projection_model=ProcessWithRules,
+        ).to_list()
+
+        return process
 
     async def create(self, process: Process):
         process_to_insert = ProcessDocument(**process.model_dump(by_alias=True))

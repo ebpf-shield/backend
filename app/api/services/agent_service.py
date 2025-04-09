@@ -1,10 +1,9 @@
-import asyncio
 from typing import Annotated
 
 from beanie import PydanticObjectId
 from fastapi import Depends
 
-from app.api.models.agent_model import Agent, AgentWithProcesses
+from app.api.models.agent_model import Agent
 from app.api.repositories.agent_repository import AgentRepository, CommonAgentRepository
 from app.api.repositories.process_repository import (
     CommonProcessRepository,
@@ -25,24 +24,23 @@ class AgentService:
     async def create(self, agent: Agent):
         return await self._agent_repository.create(agent)
 
-    async def find_all_agents(self):
-        return await self._agent_repository.get_all()
+    async def find_all(self, embed_processes: bool = False):
+        if embed_processes:
+            agents = await self._agent_repository.get_all_with_processes()
+            return agents
+
+        agents = await self._agent_repository.get_all()
+        return agents
 
     async def find_by_id(
         self, agent_id: PydanticObjectId, embed_processes: bool = False
     ):
         if embed_processes:
-            processes_task = self._process_repository.get_all_agent_id(agent_id)
-            agent_task = self._agent_repository.get_by_id(agent_id)
+            agent = await self._agent_repository.get_by_id_with_processes(agent_id)
+            return agent
 
-            agent, processes = await asyncio.gather(agent_task, processes_task)
-            agent_with_processes = AgentWithProcesses(
-                **agent.model_dump(by_alias=True), processes=processes
-            )
-
-            return agent_with_processes
-
-        return await self._agent_repository.get_by_id(agent_id)
+        agent = await self._agent_repository.get_by_id(agent_id)
+        return agent
 
     async def update(self, agent: Agent):
         return await self._agent_repository.update(agent)
