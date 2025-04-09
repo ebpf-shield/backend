@@ -1,0 +1,147 @@
+.
+├── app
+│   ├── api
+│   │   ├── errors
+│   │   │   ├── conflict_exception.py
+│   │   │   ├── custom_exception.py
+│   │   │   ├── email_already_exists_exception.py
+│   │   │   ├── __init__.py
+│   │   │   ├── invalid_password_exception.py
+│   │   │   ├── not_found_exception.py
+│   │   │   ├── no_user_with_email_exception.py
+│   │   │   ├── __pycache__
+│   │   │   │   ├── conflict_exception.cpython-312.pyc
+│   │   │   │   ├── custom_exception.cpython-312.pyc
+│   │   │   │   ├── email_already_exists_exception.cpython-312.pyc
+│   │   │   │   ├── __init__.cpython-312.pyc
+│   │   │   │   ├── invalid_password_exception.cpython-312.pyc
+│   │   │   │   ├── not_found_exception.cpython-312.pyc
+│   │   │   │   ├── no_user_with_email_exception.cpython-312.pyc
+│   │   │   │   └── validation_error.cpython-312.pyc
+│   │   │   └── validation_error.py
+│   │   ├── host
+│   │   │   ├── repositories
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── process_repository.py
+│   │   │   │   └── __pycache__
+│   │   │   │       ├── agent_repository.cpython-312.pyc
+│   │   │   │       ├── process_repository.cpython-312.pyc
+│   │   │   │       ├── rule_repository.cpython-312.pyc
+│   │   │   │       └── user_repository.cpython-312.pyc
+│   │   │   ├── routes
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── process_route.py
+│   │   │   │   └── __pycache__
+│   │   │   │       ├── agent_route.cpython-312.pyc
+│   │   │   │       ├── auth_route.cpython-312.pyc
+│   │   │   │       ├── __init__.cpython-312.pyc
+│   │   │   │       ├── process_route.cpython-312.pyc
+│   │   │   │       ├── rule_route.cpython-312.pyc
+│   │   │   │       └── user_route.cpython-312.pyc
+│   │   │   └── services
+│   │   │       ├── __init__.py
+│   │   │       ├── process_service.py
+│   │   │       └── __pycache__
+│   │   │           ├── agent_service.cpython-312.pyc
+│   │   │           ├── auth_service.cpython-312.pyc
+│   │   │           ├── __init__.cpython-312.pyc
+│   │   │           ├── jwt_service.cpython-312.pyc
+│   │   │           ├── process_service.cpython-312.pyc
+│   │   │           └── rule_service.cpython-312.pyc
+│   │   ├── __init__.py
+│   │   ├── models
+│   │   │   ├── agent_model.py
+│   │   │   ├── __init__.py
+│   │   │   ├── process_model.py
+│   │   │   ├── __pycache__
+│   │   │   │   ├── agent_model.cpython-312.pyc
+│   │   │   │   ├── __init__.cpython-312.pyc
+│   │   │   │   ├── process_model.cpython-312.pyc
+│   │   │   │   ├── rule_model.cpython-312.pyc
+│   │   │   │   └── user_model.cpython-312.pyc
+│   │   │   ├── query
+│   │   │   │   ├── agent_embed_query_model.py
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── process_embed_query_model.py
+│   │   │   │   └── __pycache__
+│   │   │   │       ├── agent_embed_query_model.cpython-312.pyc
+│   │   │   │       ├── __init__.cpython-312.pyc
+│   │   │   │       └── process_embed_query_model.cpython-312.pyc
+│   │   │   ├── rule_model.py
+│   │   │   └── user_model.py
+│   │   ├── __pycache__
+│   │   │   └── __init__.cpython-312.pyc
+│   │   └── ui
+│   │       ├── repositories
+│   │       │   ├── agent_repository.py
+│   │       │   ├── process_repository.py
+│   │       │   ├── __pycache__
+│   │       │   │   ├── agent_repository.cpython-312.pyc
+│   │       │   │   ├── process_repository.cpython-312.pyc
+│   │       │   │   ├── rule_repository.cpython-312.pyc
+│   │       │   │   └── user_repository.cpython-312.pyc
+│   │       │   ├── rule_repository.py
+│   │       │   └── user_repository.py
+│   │       ├── routes
+│   │       │   ├── agent_route.py
+│   │       │   ├── auth_route.py
+│   │       │   ├── __init__.py
+│   │       │   ├── process_route.py
+│   │       │   ├── __pycache__
+│   │       │   │   ├── agent_route.cpython-312.pyc
+│   │       │   │   ├── auth.cpython-312.pyc
+│   │       │   │   ├── auth_route.cpython-312.pyc
+│   │       │   │   ├── __init__.cpython-312.pyc
+│   │       │   │   ├── process_route.cpython-312.pyc
+│   │       │   │   ├── rule_route.cpython-312.pyc
+│   │       │   │   └── user_route.cpython-312.pyc
+│   │       │   ├── rule_route.py
+│   │       │   └── user_route.py
+│   │       └── services
+│   │           ├── agent_service.py
+│   │           ├── auth_service.py
+│   │           ├── __init__.py
+│   │           ├── jwt_service.py
+│   │           ├── process_service.py
+│   │           ├── __pycache__
+│   │           │   ├── agent_service.cpython-312.pyc
+│   │           │   ├── auth_service.cpython-312.pyc
+│   │           │   ├── __init__.cpython-312.pyc
+│   │           │   ├── jwt_service.cpython-312.pyc
+│   │           │   ├── process_service.cpython-312.pyc
+│   │           │   ├── rule_service.cpython-312.pyc
+│   │           │   └── user_service.cpython-312.pyc
+│   │           ├── rule_service.py
+│   │           └── user_service.py
+│   ├── core
+│   │   ├── app.py
+│   │   ├── config.py
+│   │   ├── db.py
+│   │   ├── __init__.py
+│   │   ├── logger.py
+│   │   ├── __pycache__
+│   │   │   ├── app.cpython-312.pyc
+│   │   │   ├── config.cpython-312.pyc
+│   │   │   ├── db.cpython-312.pyc
+│   │   │   ├── __init__.cpython-312.pyc
+│   │   │   └── logger.cpython-312.pyc
+│   │   └── utils
+│   │       └── partial.py
+│   ├── main.py
+│   └── __pycache__
+│       └── main.cpython-312.pyc
+├── docker-compose.yml
+├── Dockerfile
+├── poetry.lock
+├── __pycache__
+│   └── main.cpython-312.pyc
+├── pyproject.toml
+├── README.md
+├── scripts
+│   ├── install.sh
+│   └── run.sh
+├── tests
+│   └── __init__.py
+└── tree.txt
+
+31 directories, 114 files

@@ -10,16 +10,16 @@ from app.api.ui.repositories.agent_repository import (
 )
 from app.api.ui.repositories.process_repository import (
     CommonProcessRepository,
-    ProcessRepository,
+    UIProcessRepository,
 )
 
 
 class UIAgentService:
     _agent_repository: AgentRepository
-    _process_repository: ProcessRepository
+    _process_repository: UIProcessRepository
 
     def __init__(
-        self, agent_repository: AgentRepository, process_repository: ProcessRepository
+        self, agent_repository: AgentRepository, process_repository: UIProcessRepository
     ):
         self._process_repository = process_repository
         self._agent_repository = agent_repository

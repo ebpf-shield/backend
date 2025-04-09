@@ -4,9 +4,9 @@ from fastapi import APIRouter, Body, Path
 from fastapi.responses import JSONResponse
 
 from app.api.errors.not_found_exception import NotFoundException
+from app.api.host.services.agent_service import CommonHostAgentService
 from app.api.host.services.process_service import CommonHostProcessService
 from app.api.models.process_model import Process, ProcessWithoutAgentId
-from app.api.ui.services.agent_service import CommonUIAgentService
 
 
 router = APIRouter(tags=["process"])
@@ -17,14 +17,14 @@ async def update_many_by_agent_id(
     agent_id: Annotated[PydanticObjectId, Path(description="Agent id")],
     processes: Annotated[list[ProcessWithoutAgentId], Body()],
     process_service: CommonHostProcessService,
-    agent_service: CommonUIAgentService,
+    agent_service: CommonHostAgentService,
 ):
     agent = await agent_service.find_by_id(agent_id)
     if not agent:
         raise NotFoundException(detail=f"Agent with id {agent_id} not found")
 
     # Did not find a better way.
-    processes_with_agent_id = []
+    processes_with_agent_id: list[Process] = []
     for process in processes:
         new_process = Process(**process.model_dump(by_alias=True))
         new_process.agent_id = agent_id
@@ -36,14 +36,15 @@ async def update_many_by_agent_id(
 
     if len(res) == 2:
         return {
-            "modified_count": res[0].modified_count,
-            "inserted_count": 0,
+            "stopped_count": res[0].modified_count,
+            "started_count": res[1].modified_count,
         }
 
     if len(res) == 3:
         return {
-            "modified_count": res[1].modified_count,
             "inserted_count": len(res[0].inserted_ids),
+            "sttoped_count": res[1].modified_count,
+            "started_count": res[2].modified_count,
         }
 
     return JSONResponse(
