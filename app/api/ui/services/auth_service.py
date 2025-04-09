@@ -8,7 +8,7 @@ from app.api.errors.email_already_exists_exception import EmailAlreadyExistsExce
 from app.api.errors.invalid_password_exception import InvalidPasswordException
 from app.api.errors.no_user_with_email_exception import NoUserWithEmailException
 from app.api.models.user_model import User, UserLogin, UserRegister
-from app.api.repositories.user_repository import CommonUserRepository, UserRepository
+from app.api.ui.repositories.user_repository import CommonUserRepository, UserRepository
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 

@@ -6,10 +6,10 @@ from app.api.errors.email_already_exists_exception import EmailAlreadyExistsExce
 from app.api.errors.invalid_password_exception import InvalidPasswordException
 from app.api.errors.no_user_with_email_exception import NoUserWithEmailException
 from app.api.models.user_model import UserLogin, UserRegister
-from app.api.services.auth_service import (
+from app.api.ui.services.auth_service import (
     CommonAuthService,
 )
-from app.api.services.jwt_service import CommonJwtService
+from app.api.ui.services.jwt_service import CommonJwtService
 
 router = APIRouter(tags=["auth"])
 

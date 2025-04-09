@@ -3,7 +3,7 @@ from typing import Annotated
 from beanie import PydanticObjectId
 from fastapi import Depends
 from app.api.models.process_model import Process
-from app.api.repositories.process_repository import (
+from app.api.ui.repositories.process_repository import (
     CommonProcessRepository,
     ProcessRepository,
 )

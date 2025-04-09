@@ -4,7 +4,7 @@ from fastapi import APIRouter, Body, Path, Query
 
 from app.api.errors.not_found_exception import NotFoundException
 from app.api.models.agent_model import Agent, AgentWithProcesses
-from app.api.services.agent_service import CommonAgentService
+from app.api.ui.services.agent_service import CommonAgentService
 from app.api.models.query.agent_embed_query_model import AgentEmbedQuery
 
 router = APIRouter(tags=["agents"])

@@ -11,8 +11,8 @@ from app.api.models.process_model import (
     ProcessWithoutAgentId,
 )
 from app.api.models.query.process_embed_query_model import ProcessEmbedQuery
-from app.api.services.agent_service import CommonAgentService
-from app.api.services.process_service import CommonProcessService
+from app.api.ui.services.agent_service import CommonAgentService
+from app.api.ui.services.process_service import CommonProcessService
 
 
 router = APIRouter(tags=["processes"])

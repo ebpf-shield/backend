@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.errors.validation_error import request_validation_exception_handler
 from app.core.db import mongo_client_manager
 from app.core.logger import setup_logger
-from ..api.routes import api_router
+from ..api.ui.routes import api_router
 
 
 @asynccontextmanager

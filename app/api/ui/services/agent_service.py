@@ -4,8 +4,11 @@ from beanie import PydanticObjectId
 from fastapi import Depends
 
 from app.api.models.agent_model import Agent
-from app.api.repositories.agent_repository import AgentRepository, CommonAgentRepository
-from app.api.repositories.process_repository import (
+from app.api.ui.repositories.agent_repository import (
+    AgentRepository,
+    CommonAgentRepository,
+)
+from app.api.ui.repositories.process_repository import (
     CommonProcessRepository,
     ProcessRepository,
 )
