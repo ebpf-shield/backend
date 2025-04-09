@@ -11,7 +11,7 @@ from app.api.ui.repositories.process_repository import (
 from pymongo.results import UpdateResult, InsertManyResult
 
 
-class ProcessService:
+class UIProcessService:
     _process_repository: ProcessRepository
 
     def __init__(self, process_repository: ProcessRepository):
@@ -89,9 +89,9 @@ class ProcessService:
 
 
 def get_process_service(process_repository: CommonProcessRepository):
-    return ProcessService(process_repository=process_repository)
+    return UIProcessService(process_repository=process_repository)
 
 
-CommonProcessService = Annotated[
-    ProcessService, Depends(get_process_service, use_cache=True)
+CommonUIProcessService = Annotated[
+    UIProcessService, Depends(get_process_service, use_cache=True)
 ]

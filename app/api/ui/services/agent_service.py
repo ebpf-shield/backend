@@ -14,7 +14,7 @@ from app.api.ui.repositories.process_repository import (
 )
 
 
-class AgentService:
+class UIAgentService:
     _agent_repository: AgentRepository
     _process_repository: ProcessRepository
 
@@ -52,9 +52,11 @@ class AgentService:
 def get_agent_service(
     agent_repository: CommonAgentRepository, process_repository: CommonProcessRepository
 ):
-    return AgentService(
+    return UIAgentService(
         agent_repository=agent_repository, process_repository=process_repository
     )
 
 
-CommonAgentService = Annotated[AgentService, Depends(get_agent_service, use_cache=True)]
+CommonUIAgentService = Annotated[
+    UIAgentService, Depends(get_agent_service, use_cache=True)
+]
