@@ -4,6 +4,7 @@ from fastapi import APIRouter, Body, Path
 from fastapi.responses import JSONResponse
 
 from app.api.errors.not_found_exception import NotFoundException
+from app.api.host.services.process_service import CommonHostProcessService
 from app.api.models.process_model import Process, ProcessWithoutAgentId
 from app.api.ui.services.agent_service import CommonUIAgentService
 
@@ -15,7 +16,7 @@ router = APIRouter(tags=["process"])
 async def update_many_by_agent_id(
     agent_id: Annotated[PydanticObjectId, Path(description="Agent id")],
     processes: Annotated[list[ProcessWithoutAgentId], Body()],
-    process_service: CommonProcessService,
+    process_service: CommonHostProcessService,
     agent_service: CommonUIAgentService,
 ):
     agent = await agent_service.find_by_id(agent_id)
@@ -57,6 +58,6 @@ async def update_many_by_agent_id(
 )
 async def find_by_agent_with_rules_grouped_by_command(
     agent_id: Annotated[PydanticObjectId, Path(description="Agent id")],
-    process_service: CommonProcessService,
+    process_service: CommonHostProcessService,
 ):
     return await process_service.find_by_agent_with_rules_grouped_by_command(agent_id)
