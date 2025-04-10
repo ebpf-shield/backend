@@ -5,7 +5,10 @@ from beanie import PydanticObjectId
 from fastapi import Depends
 from pymongo.results import InsertManyResult, UpdateResult
 
-from app.api.host.repositories.process_repository import HostProcessRepository
+from app.api.host.repositories.process_repository import (
+    CommonHostProcessRepository,
+    HostProcessRepository,
+)
 from app.api.models.process_model import Process
 
 
@@ -98,8 +101,8 @@ class HostProcessService:
         )
 
 
-def get_process_service():
-    return HostProcessService()
+def get_process_service(process_repository: CommonHostProcessRepository):
+    return HostProcessService(process_repository)
 
 
 CommonHostProcessService = Annotated[
