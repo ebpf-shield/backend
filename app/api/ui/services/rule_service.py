@@ -3,7 +3,7 @@ from typing import Annotated
 from beanie import PydanticObjectId
 from fastapi import Depends
 from app.api.models.rule_model import Rule
-from app.api.repositories.rule_repository import CommonRuleRepository, RuleRepository
+from app.api.ui.repositories.rule_repository import CommonRuleRepository, RuleRepository
 
 
 class RuleService:

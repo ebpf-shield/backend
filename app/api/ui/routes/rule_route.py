@@ -4,10 +4,10 @@ from fastapi import APIRouter, Body, Path
 
 from app.api.errors.not_found_exception import NotFoundException
 from app.api.models.rule_model import Rule
-from app.api.services.rule_service import CommonRuleService
+from app.api.ui.services.rule_service import CommonRuleService
 
 
-router = APIRouter(tags=["rules"])
+router = APIRouter(tags=["rule"])
 
 
 @router.get("/process/{process_id}", description="Get rule by process id")

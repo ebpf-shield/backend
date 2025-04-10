@@ -5,7 +5,7 @@ from .process_route import router as process_router
 from .rule_route import router as rule_router
 from .user_route import router as user_router
 
-api_router = APIRouter()
+api_router = APIRouter(prefix="/ui", tags=["ui"])
 
 api_router.include_router(router=auth_router, prefix="/auth")
 api_router.include_router(router=agent_router, prefix="/agent")

@@ -4,19 +4,22 @@ from beanie import PydanticObjectId
 from fastapi import Depends
 
 from app.api.models.agent_model import Agent
-from app.api.repositories.agent_repository import AgentRepository, CommonAgentRepository
-from app.api.repositories.process_repository import (
+from app.api.ui.repositories.agent_repository import (
+    AgentRepository,
+    CommonAgentRepository,
+)
+from app.api.ui.repositories.process_repository import (
     CommonProcessRepository,
-    ProcessRepository,
+    UIProcessRepository,
 )
 
 
-class AgentService:
+class UIAgentService:
     _agent_repository: AgentRepository
-    _process_repository: ProcessRepository
+    _process_repository: UIProcessRepository
 
     def __init__(
-        self, agent_repository: AgentRepository, process_repository: ProcessRepository
+        self, agent_repository: AgentRepository, process_repository: UIProcessRepository
     ):
         self._process_repository = process_repository
         self._agent_repository = agent_repository
@@ -49,9 +52,11 @@ class AgentService:
 def get_agent_service(
     agent_repository: CommonAgentRepository, process_repository: CommonProcessRepository
 ):
-    return AgentService(
+    return UIAgentService(
         agent_repository=agent_repository, process_repository=process_repository
     )
 
 
-CommonAgentService = Annotated[AgentService, Depends(get_agent_service, use_cache=True)]
+CommonUIAgentService = Annotated[
+    UIAgentService, Depends(get_agent_service, use_cache=True)
+]

@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 from app.api.models.user_model import User
-from app.api.repositories.user_repository import CommonUserRepository, UserRepository
+from app.api.ui.repositories.user_repository import CommonUserRepository, UserRepository
 
 
 class UserService:
