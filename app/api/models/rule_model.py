@@ -17,13 +17,19 @@ class RuleChain(str, Enum):
     OUTPUT = "OUTPUT"
 
 
+class RuleProtocol(str, Enum):
+    TCP = "TCP"
+    UDP = "UDP"
+    ICMP = "ICMP"
+
+
 class Rule(BaseModel):
     id: Optional[PydanticObjectId] = Field(alias="_id", default=None)
     saddr: Optional[IPvAnyAddress]
     daddr: Optional[IPvAnyAddress]
     sport: int = Field(ge=0, le=65535)
     dport: int = Field(ge=0, le=65535)
-    protocol: Optional[str]
+    protocol: Optional[RuleProtocol] = Field(default=RuleProtocol.TCP)
     action: Optional[RuleAction] = Field(default=RuleAction.ACCEPT)
     chain: Optional[RuleChain] = Field(default=RuleChain.INPUT)
     priority: int = Field(ge=0, le=100000)
