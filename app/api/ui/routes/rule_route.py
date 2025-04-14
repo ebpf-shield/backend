@@ -50,3 +50,21 @@ async def update(
     rule_service: CommonRuleService,
 ):
     return await rule_service.update(rule_id, rule)
+
+
+@router.delete("/{rule_id}", description="Delete rule by id")
+async def delete(
+    rule_id: Annotated[PydanticObjectId, Path(description="Rule id")],
+    rule_service: CommonRuleService,
+):
+    res = await rule_service.delete(rule_id)
+    if not res:
+        raise NotFoundException(detail=f"Rule with id {rule_id} not found")
+
+    if res.deleted_count == 0:
+        raise NotFoundException(detail=f"Rule with id {rule_id} not found")
+
+    return {
+        "acknowledged": res.acknowledged,
+        "deleted_count": res.deleted_count,
+    }
