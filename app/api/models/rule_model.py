@@ -5,6 +5,9 @@ from typing import Optional
 from beanie import Document, PydanticObjectId
 from pydantic import BaseModel, Field, IPvAnyAddress
 
+MIN_PORT_NUMBER = 0
+MAX_PORT_NUMBER = 65535
+
 
 class RuleAction(str, Enum):
     ACCEPT = "ACCEPT"
@@ -17,13 +20,19 @@ class RuleChain(str, Enum):
     OUTPUT = "OUTPUT"
 
 
+class RuleProtocol(str, Enum):
+    TCP = "TCP"
+    UDP = "UDP"
+    ICMP = "ICMP"
+
+
 class Rule(BaseModel):
     id: Optional[PydanticObjectId] = Field(alias="_id", default=None)
     saddr: Optional[IPvAnyAddress]
     daddr: Optional[IPvAnyAddress]
-    sport: int = Field(ge=0, le=65535)
-    dport: int = Field(ge=0, le=65535)
-    protocol: Optional[str]
+    sport: int = Field(ge=MIN_PORT_NUMBER, le=MAX_PORT_NUMBER)
+    dport: int = Field(ge=MIN_PORT_NUMBER, le=MAX_PORT_NUMBER)
+    protocol: Optional[RuleProtocol] = Field(default=RuleProtocol.TCP)
     action: Optional[RuleAction] = Field(default=RuleAction.ACCEPT)
     chain: Optional[RuleChain] = Field(default=RuleChain.INPUT)
     priority: int = Field(ge=0, le=100000)

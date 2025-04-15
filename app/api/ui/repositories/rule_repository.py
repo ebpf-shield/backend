@@ -24,6 +24,9 @@ class RuleRepository:
         rule_to_update = RuleDocument(**rule.model_dump(by_alias=True))
         return await rule_to_update.update()
 
+    async def delete(self, rule_id: PydanticObjectId):
+        return await RuleDocument.find_one({RuleDocument.id: rule_id}).delete_one()
+
 
 def get_rule_repository():
     return RuleRepository()

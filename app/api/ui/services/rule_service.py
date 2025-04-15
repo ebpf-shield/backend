@@ -24,6 +24,9 @@ class RuleService:
     async def update(self, rule: Rule):
         return await self._rule_repository.update(rule)
 
+    async def delete(self, rule_id: PydanticObjectId):
+        return await self._rule_repository.delete(rule_id)
+
 
 def get_rule_service(rule_repository: CommonRuleRepository):
     return RuleService(rule_repository=rule_repository)
