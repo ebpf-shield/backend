@@ -4,9 +4,12 @@ from fastapi import APIRouter, Body, Path
 from fastapi.responses import JSONResponse
 
 from app.api.errors.not_found_exception import NotFoundException
+from app.api.host.models.process.update_many_by_agent_id_dto import (
+    UpdateManyByAgentIdDTO,
+)
 from app.api.host.services.agent_service import CommonHostAgentService
 from app.api.host.services.process_service import CommonHostProcessService
-from app.api.models.process_model import Process, ProcessWithoutAgentId
+from app.api.models.process_model import Process
 
 
 router = APIRouter(tags=["process"])
@@ -15,7 +18,7 @@ router = APIRouter(tags=["process"])
 @router.patch("/agent/{agent_id}", description="Update processes by agent id")
 async def update_many_by_agent_id(
     agent_id: Annotated[PydanticObjectId, Path(description="Agent id")],
-    processes: Annotated[list[ProcessWithoutAgentId], Body()],
+    body: Annotated[UpdateManyByAgentIdDTO, Body()],
     process_service: CommonHostProcessService,
     agent_service: CommonHostAgentService,
 ):
@@ -25,7 +28,7 @@ async def update_many_by_agent_id(
 
     # Did not find a better way.
     processes_with_agent_id: list[Process] = []
-    for process in processes:
+    for process in body.processes:
         new_process = Process(**process.model_dump(by_alias=True))
         new_process.agent_id = agent_id
         processes_with_agent_id.append(new_process)

@@ -7,6 +7,7 @@ from app.api.host.repositories.agent_repository import (
     CommonHostAgentRepository,
     HostAgentRepository,
 )
+from app.api.models.agent_model import Agent
 
 
 class HostAgentService:
@@ -17,6 +18,9 @@ class HostAgentService:
 
     async def find_by_id(self, agent_id: PydanticObjectId):
         return await self._agent_repository.get_by_id(agent_id)
+
+    async def create(self, agent: Agent):
+        return await self._agent_repository.create(agent)
 
 
 def get_agent_service(agent_repository: CommonHostAgentRepository):

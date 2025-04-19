@@ -5,8 +5,8 @@ from fastapi import Depends
 
 from app.api.models.agent_model import Agent
 from app.api.ui.repositories.agent_repository import (
-    AgentRepository,
-    CommonAgentRepository,
+    UIAgentRepository,
+    CommonUIAgentRepository,
 )
 from app.api.ui.repositories.process_repository import (
     CommonProcessRepository,
@@ -15,11 +15,13 @@ from app.api.ui.repositories.process_repository import (
 
 
 class UIAgentService:
-    _agent_repository: AgentRepository
+    _agent_repository: UIAgentRepository
     _process_repository: UIProcessRepository
 
     def __init__(
-        self, agent_repository: AgentRepository, process_repository: UIProcessRepository
+        self,
+        agent_repository: UIAgentRepository,
+        process_repository: UIProcessRepository,
     ):
         self._process_repository = process_repository
         self._agent_repository = agent_repository
@@ -50,7 +52,8 @@ class UIAgentService:
 
 
 def get_agent_service(
-    agent_repository: CommonAgentRepository, process_repository: CommonProcessRepository
+    agent_repository: CommonUIAgentRepository,
+    process_repository: CommonProcessRepository,
 ):
     return UIAgentService(
         agent_repository=agent_repository, process_repository=process_repository
