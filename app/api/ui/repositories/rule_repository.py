@@ -6,7 +6,7 @@ from fastapi import Depends
 from app.api.models.rule_model import Rule, RuleDocument
 
 
-class RuleRepository:
+class UIRuleRepository:
     def __init__(self):
         pass
 
@@ -29,9 +29,9 @@ class RuleRepository:
 
 
 def get_rule_repository():
-    return RuleRepository()
+    return UIRuleRepository()
 
 
-CommonRuleRepository = Annotated[
-    RuleRepository, Depends(get_rule_repository, use_cache=True)
+CommonUIRuleRepository = Annotated[
+    UIRuleRepository, Depends(get_rule_repository, use_cache=True)
 ]

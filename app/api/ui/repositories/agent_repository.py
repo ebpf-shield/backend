@@ -6,7 +6,7 @@ from fastapi import Depends
 from app.api.models.agent_model import Agent, AgentDocument, AgentWithProcesses
 
 
-class AgentRepository:
+class UIAgentRepository:
     def __init__(self):
         pass
 
@@ -59,9 +59,9 @@ class AgentRepository:
 
 
 def get_agent_repository():
-    return AgentRepository()
+    return UIAgentRepository()
 
 
-CommonAgentRepository = Annotated[
-    AgentRepository, Depends(get_agent_repository, use_cache=True)
+CommonUIAgentRepository = Annotated[
+    UIAgentRepository, Depends(get_agent_repository, use_cache=True)
 ]

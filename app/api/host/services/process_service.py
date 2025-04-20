@@ -1,11 +1,13 @@
-import asyncio
 from typing import Annotated
 
 from beanie import PydanticObjectId
 from fastapi import Depends
 from pymongo.results import InsertManyResult, UpdateResult
 
-from app.api.host.repositories.process_repository import HostProcessRepository
+from app.api.host.repositories.process_repository import (
+    CommonHostProcessRepository,
+    HostProcessRepository,
+)
 from app.api.models.process_model import Process
 
 
@@ -65,41 +67,42 @@ class HostProcessService:
                     if process.command not in existing_processes_commands
                 ]
 
-                update_stop_task = (
+                # TODO: Convert to bulk operation
+                update_stop = await (
                     self._process_repository.update_status_to_stopped_by_agent_id(
                         agent_id, existing_processes_commands, session=session
                     )
                 )
 
-                update_running_task = (
+                update_running = await (
                     self._process_repository.update_status_to_running_for_agent_id(
                         agent_id, existing_processes_commands, session=session
                     )
                 )
 
                 if not non_exsisting_processes:
-                    return await asyncio.gather(update_stop_task, update_running_task)
+                    return update_stop, update_running
 
-                insert_many_task = self._process_repository.create_many(
+                insert_many = await self._process_repository.create_many(
                     non_exsisting_processes, session=session
                 )
 
-                return await asyncio.gather(
-                    insert_many_task, update_stop_task, update_running_task
-                )
+                return insert_many, update_stop, update_running
 
     async def find_by_agent_with_rules_grouped_by_command(
         self, agent_id: PydanticObjectId
     ):
-        return (
+        rules_by_command = (
             await self._process_repository.get_by_agent_with_rules_grouped_by_command(
                 agent_id
             )
         )
 
+        return {"rulesByCommand": rules_by_command}
 
-def get_process_service():
-    return HostProcessService()
+
+def get_process_service(process_repository: CommonHostProcessRepository):
+    return HostProcessService(process_repository)
 
 
 CommonHostProcessService = Annotated[

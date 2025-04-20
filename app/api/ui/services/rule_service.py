@@ -3,13 +3,16 @@ from typing import Annotated
 from beanie import PydanticObjectId
 from fastapi import Depends
 from app.api.models.rule_model import Rule
-from app.api.ui.repositories.rule_repository import CommonRuleRepository, RuleRepository
+from app.api.ui.repositories.rule_repository import (
+    CommonUIRuleRepository,
+    UIRuleRepository,
+)
 
 
 class RuleService:
-    _rule_repository: RuleRepository
+    _rule_repository: UIRuleRepository
 
-    def __init__(self, rule_repository: RuleRepository):
+    def __init__(self, rule_repository: UIRuleRepository):
         self._rule_repository = rule_repository
 
     async def find_all_by_process_id(self, process_id: PydanticObjectId):
@@ -28,7 +31,7 @@ class RuleService:
         return await self._rule_repository.delete(rule_id)
 
 
-def get_rule_service(rule_repository: CommonRuleRepository):
+def get_rule_service(rule_repository: CommonUIRuleRepository):
     return RuleService(rule_repository=rule_repository)
 
 
