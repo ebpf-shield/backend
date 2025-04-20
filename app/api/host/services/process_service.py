@@ -92,11 +92,13 @@ class HostProcessService:
     async def find_by_agent_with_rules_grouped_by_command(
         self, agent_id: PydanticObjectId
     ):
-        return (
+        rules_by_command = (
             await self._process_repository.get_by_agent_with_rules_grouped_by_command(
                 agent_id
             )
         )
+
+        return {"rulesByCommand": rules_by_command}
 
 
 def get_process_service(process_repository: CommonHostProcessRepository):
