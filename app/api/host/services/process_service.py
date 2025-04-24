@@ -8,7 +8,7 @@ from app.api.host.repositories.process_repository import (
     CommonHostProcessRepository,
     HostProcessRepository,
 )
-from app.api.models.process_model import Process
+from app.api.models.process_model import Process, ProcessWithoutAgentId
 
 
 class HostProcessService:
@@ -18,7 +18,7 @@ class HostProcessService:
         self._process_repository = process_repository
 
     async def update_many_by_agent_id(
-        self, agent_id: PydanticObjectId, processes: list[Process]
+        self, agent_id: PydanticObjectId, processes: list[ProcessWithoutAgentId]
     ) -> (
         tuple[UpdateResult, UpdateResult]
         | tuple[InsertManyResult, UpdateResult, UpdateResult]
@@ -83,8 +83,14 @@ class HostProcessService:
                 if not non_exsisting_processes:
                     return update_stop, update_running
 
+                non_existing_processes_with_agent_id: list[Process] = []
+                for process in non_exsisting_processes:
+                    new_process = Process(**process.model_dump(by_alias=True))
+                    new_process.agent_id = agent_id
+                    non_existing_processes_with_agent_id.append(new_process)
+
                 insert_many = await self._process_repository.create_many(
-                    non_exsisting_processes, session=session
+                    non_existing_processes_with_agent_id, session=session
                 )
 
                 return insert_many, update_stop, update_running

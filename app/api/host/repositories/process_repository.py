@@ -4,6 +4,7 @@ from beanie import PydanticObjectId
 from beanie.operators import In, NotIn, Set
 from fastapi import Depends
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorClientSession
+import datetime as dt
 
 from app.api.models.process_model import (
     Process,
@@ -43,7 +44,12 @@ class HostProcessRepository:
             ProcessDocument.agent_id == agent_id,
             NotIn(ProcessDocument.command, active_commands),
         ).update_many(
-            Set({ProcessDocument.status: ProcessStatus.STOPPED}),
+            Set(
+                {
+                    ProcessDocument.status: ProcessStatus.STOPPED,
+                    ProcessDocument.updated_at: dt.datetime.now(),
+                }
+            ),
             session=session,
         )
 

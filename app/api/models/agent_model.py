@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 from typing import Optional
 from beanie import Document, PydanticObjectId
 from faker import Faker
@@ -12,13 +12,12 @@ faker = Faker()
 class Agent(BaseModel):
     id: Optional[PydanticObjectId] = Field(alias="_id", default=None)
     name: Optional[str] = Field(default_factory=faker.name)
-    created_at: datetime.datetime = Field(
-        alias="createdAt", default_factory=datetime.datetime.now
-    )
-    updated_at: datetime.datetime = Field(
-        alias="updatedAt", default_factory=datetime.datetime.now
-    )
+    created_at: dt.datetime = Field(alias="createdAt", default_factory=dt.datetime.now)
+    updated_at: dt.datetime = Field(alias="updatedAt", default_factory=dt.datetime.now)
     online: bool = True
+    processes_to_exclude: list[str] = Field(
+        alias="processesToExclude", default=["kworker"]
+    )
 
 
 class AgentDocument(Document, Agent):
