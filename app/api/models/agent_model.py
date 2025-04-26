@@ -25,6 +25,7 @@ class AgentDocument(Document, Agent):
 
     class Settings:
         name = "agents"
+        keep_nulls = False
 
 
 class AgentWithProcesses(Agent):

@@ -38,6 +38,7 @@ class ProcessDocument(Document, Process):
 
     class Settings:
         name = "processes"
+        keep_nulls = False
 
 
 class ProcessWithRules(Process):
