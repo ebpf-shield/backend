@@ -9,7 +9,6 @@ from app.api.host.models.process.update_many_by_agent_id_dto import (
 )
 from app.api.host.services.agent_service import CommonHostAgentService
 from app.api.host.services.process_service import CommonHostProcessService
-from app.api.models.process_model import Process
 
 
 router = APIRouter(tags=["process"])
@@ -26,16 +25,7 @@ async def update_many_by_agent_id(
     if not agent:
         raise NotFoundException(detail=f"Agent with id {agent_id} not found")
 
-    # Did not find a better way.
-    processes_with_agent_id: list[Process] = []
-    for process in body.processes:
-        new_process = Process(**process.model_dump(by_alias=True))
-        new_process.agent_id = agent_id
-        processes_with_agent_id.append(new_process)
-
-    res = await process_service.update_many_by_agent_id(
-        agent_id, processes_with_agent_id
-    )
+    res = await process_service.update_many_by_agent_id(agent_id, body.processes)
 
     if len(res) == 2:
         return {

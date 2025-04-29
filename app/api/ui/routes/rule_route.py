@@ -1,11 +1,11 @@
 from typing import Annotated
+
 from beanie import PydanticObjectId
 from fastapi import APIRouter, Body, Path
 
 from app.api.errors.not_found_exception import NotFoundException
-from app.api.models.rule_model import Rule
+from app.api.models.rule_model import Rule, RuleBody
 from app.api.ui.services.rule_service import CommonRuleService
-
 
 router = APIRouter(tags=["rule"])
 
@@ -19,7 +19,7 @@ async def find_all_by_process_id(
 
 
 @router.post("", description="Create a new rule")
-async def create(rule: Annotated[Rule, Body()], rule_service: CommonRuleService):
+async def create(rule: Annotated[RuleBody, Body()], rule_service: CommonRuleService):
     return await rule_service.create(rule)
 
 
@@ -46,7 +46,7 @@ async def find_by_id(
 )
 async def update(
     rule_id: Annotated[PydanticObjectId, Path(description="Rule id")],
-    rule: Annotated[Rule, Body()],
+    rule: Annotated[RuleBody, Body()],
     rule_service: CommonRuleService,
 ):
     return await rule_service.update(rule_id, rule)

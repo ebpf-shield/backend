@@ -1,8 +1,7 @@
 from typing import Annotated
 
-from anyio import Path
 from beanie import PydanticObjectId
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, Path
 from pymongo.errors import DuplicateKeyError
 
 from app.api.errors.conflict_exception import ConflictException
@@ -40,3 +39,19 @@ async def exists(
     return ExistsByIdResponseDto(
         exists=agent is not None,
     )
+
+
+@router.get(
+    "/{agent_id}/processes-to-exclude",
+    description="get the processes to exclude by agent id",
+)
+async def get_processes_to_exclude(
+    agent_id: Annotated[PydanticObjectId, Path(description="Agent id")],
+    agent_service: CommonHostAgentRepository,
+):
+    agent = await agent_service.get_by_id(agent_id)
+    if not agent:
+        return ConflictException(
+            detail=f"Agent with id {agent_id} not found",
+        )
+    return {"processesToExclude": agent.processes_to_exclude}
