@@ -2,7 +2,7 @@ from typing import Annotated
 
 from beanie import PydanticObjectId
 from fastapi import Depends
-from app.api.models.rule_model import Rule
+from app.api.models.rule_model import PartialRule, Rule
 from app.api.ui.repositories.rule_repository import (
     CommonUIRuleRepository,
     UIRuleRepository,
@@ -24,8 +24,8 @@ class RuleService:
     async def create(self, rule: Rule):
         return await self._rule_repository.create(rule)
 
-    async def update(self, rule: Rule):
-        return await self._rule_repository.update(rule)
+    async def update(self, rule_id: PydanticObjectId, rule: PartialRule):
+        return await self._rule_repository.update(rule_id, rule)
 
     async def delete(self, rule_id: PydanticObjectId):
         return await self._rule_repository.delete(rule_id)
