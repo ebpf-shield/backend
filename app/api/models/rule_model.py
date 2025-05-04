@@ -3,7 +3,9 @@ from enum import Enum
 from typing import Literal, Optional
 
 from beanie import Document, PydanticObjectId
-from pydantic import BaseModel, Field, IPvAnyAddress
+from pydantic import BaseModel, ConfigDict, Field, IPvAnyAddress
+
+from app.core.utils.partial import partial_model
 
 MIN_PORT_NUMBER = 0
 MAX_PORT_NUMBER = 65535
@@ -27,6 +29,13 @@ class RuleProtocol(str, Enum):
 
 
 class BaseRule(BaseModel):
+    model_config = ConfigDict(
+        validate_by_name=True,
+        serialize_by_alias=True,
+        validate_by_alias=True,
+        extra="ignore",
+    )
+
     id: Optional[PydanticObjectId] = Field(alias="_id", default=None)
     action: Optional[RuleAction] = Field(default=RuleAction.ACCEPT)
     protocol: Optional[RuleProtocol] = Field(default=RuleProtocol.TCP)
@@ -55,12 +64,22 @@ class Rule(BaseRule):
     chain: Optional[RuleChain] = Field(default=RuleChain.INPUT)
 
 
+@partial_model()
+class PartialRule(Rule):
+    pass
+
+
 class InputRule(BaseRule):
     saddr: IPvAnyAddress = Field(description="Source address (IP or CIDR)")
     sport: Optional[int] = Field(ge=MIN_PORT_NUMBER, le=MAX_PORT_NUMBER, default=None)
     chain: Literal[RuleChain.INPUT] = Field(
         default=RuleChain.INPUT, description="Chain for the rule"
     )
+
+
+@partial_model()
+class PartialInputRule(InputRule):
+    pass
 
 
 class OutputRule(BaseRule):
@@ -71,7 +90,15 @@ class OutputRule(BaseRule):
     )
 
 
+@partial_model()
+class PartialOutputRule(OutputRule):
+    pass
+
+
+# TODO: Find a better name
 type RuleBody = InputRule | OutputRule
+
+type PartialRuleBody = PartialInputRule | PartialOutputRule
 
 
 class RuleDocument(Document, Rule):

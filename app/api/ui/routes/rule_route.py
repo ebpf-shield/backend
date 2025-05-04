@@ -4,7 +4,7 @@ from beanie import PydanticObjectId
 from fastapi import APIRouter, Body, Path
 
 from app.api.errors.not_found_exception import NotFoundException
-from app.api.models.rule_model import Rule, RuleBody
+from app.api.models.rule_model import PartialRuleBody, Rule, RuleBody
 from app.api.ui.services.rule_service import CommonRuleService
 
 router = APIRouter(tags=["rule"])
@@ -42,14 +42,17 @@ async def find_by_id(
 @router.patch(
     "/{rule_id}",
     description="Update rule by id",
-    response_model=Rule,
 )
 async def update(
     rule_id: Annotated[PydanticObjectId, Path(description="Rule id")],
-    rule: Annotated[RuleBody, Body()],
+    rule: Annotated[PartialRuleBody, Body()],
     rule_service: CommonRuleService,
 ):
-    return await rule_service.update(rule_id, rule)
+    update_res = await rule_service.update(rule_id, rule)
+    return {
+        "acknowledged": update_res.acknowledged,
+        "modified_count": update_res.modified_count,
+    }
 
 
 @router.delete("/{rule_id}", description="Delete rule by id")
