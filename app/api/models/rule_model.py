@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Literal, Optional
 
 from beanie import Document, PydanticObjectId
-from pydantic import BaseModel, ConfigDict, Field, IPvAnyAddress
+from pydantic import BaseModel, ConfigDict, Field, IPvAnyInterface
 
 from app.core.utils.partial import partial_model
 
@@ -50,15 +50,15 @@ class BaseRule(BaseModel):
     process_id: PydanticObjectId = Field(alias="processId")
 
 
-# TODO: Create input and output models for rules
+# Unfortunately, we have to redefine the fields here.
 class Rule(BaseRule):
-    saddr: Optional[IPvAnyAddress] = Field(
-        default=None, description="Source address (IP or CIDR)"
+    saddr: Optional[IPvAnyInterface] = Field(
+        default=None,
+        description="Source address (IP or CIDR)",
     )
-    daddr: Optional[IPvAnyAddress] = Field(
+    daddr: Optional[IPvAnyInterface] = Field(
         default=None, description="Destination address (IP or CIDR)"
     )
-    daddr: Optional[IPvAnyAddress]
     sport: Optional[int] = Field(ge=MIN_PORT_NUMBER, le=MAX_PORT_NUMBER, default=None)
     dport: Optional[int] = Field(ge=MIN_PORT_NUMBER, le=MAX_PORT_NUMBER, default=None)
     chain: Optional[RuleChain] = Field(default=RuleChain.INPUT)
@@ -70,7 +70,7 @@ class PartialRule(Rule):
 
 
 class InputRule(BaseRule):
-    saddr: IPvAnyAddress = Field(description="Source address (IP or CIDR)")
+    saddr: IPvAnyInterface = Field(description="Source address (IP or CIDR)")
     sport: Optional[int] = Field(ge=MIN_PORT_NUMBER, le=MAX_PORT_NUMBER, default=None)
     chain: Literal[RuleChain.INPUT] = Field(
         default=RuleChain.INPUT, description="Chain for the rule"
@@ -83,7 +83,7 @@ class PartialInputRule(InputRule):
 
 
 class OutputRule(BaseRule):
-    daddr: IPvAnyAddress = Field(description="Destination address (IP or CIDR)")
+    daddr: IPvAnyInterface = Field(description="Destination address (IP or CIDR)")
     dport: Optional[int] = Field(ge=MIN_PORT_NUMBER, le=MAX_PORT_NUMBER, default=None)
     chain: Literal[RuleChain.OUTPUT] = Field(
         default=RuleChain.OUTPUT, description="Chain for the rule"
