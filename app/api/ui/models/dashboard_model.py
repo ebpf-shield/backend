@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class CommonProcessesInAgentsAggregation(BaseModel):
@@ -9,3 +9,8 @@ class CommonProcessesInAgentsAggregation(BaseModel):
 class ProcessesWithMostRulesAggregation(BaseModel):
     name: str
     rulesCount: int
+
+
+class RulesByChainAggregation(BaseModel):
+    id: str = Field(alias="_id")
+    count: int

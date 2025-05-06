@@ -20,6 +20,9 @@ class DashboardService:
     async def processes_with_most_rules(self):
         return await self._dashboard_repository.processes_with_most_rules()
 
+    async def rules_by_chain(self):
+        return await self._dashboard_repository.rules_by_chain()
+
 
 def get_dashboard_service(dashboard_repository: CommonDashboardRepository):
     return DashboardService(dashboard_repository=dashboard_repository)
