@@ -7,7 +7,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from app.api.models.agent_model import AgentDocument
 from app.api.models.process_model import ProcessDocument
 from app.api.models.rule_model import RuleDocument
-from app.api.models.user_model import UserDocument
+from app.api.ui.models.user_model import UserDocument
 from app.core.config import settings
 
 

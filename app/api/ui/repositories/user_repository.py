@@ -2,7 +2,7 @@ from typing import Annotated
 from beanie import PydanticObjectId
 from fastapi import Depends
 
-from app.api.models.user_model import User, UserDocument
+from app.api.ui.models.user_model import User, UserDocument
 
 
 class UserRepository:

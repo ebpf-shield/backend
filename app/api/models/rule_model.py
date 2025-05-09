@@ -48,6 +48,7 @@ class BaseRule(BaseModel):
         default_factory=datetime.datetime.now, alias="updatedAt"
     )
     process_id: PydanticObjectId = Field(alias="processId")
+    group_id: PydanticObjectId = Field(alias="groupId")
 
 
 # TODO: Create input and output models for rules

@@ -50,3 +50,9 @@ app.add_middleware(
 @app.get("/health")
 async def health():
     return "Health"
+
+
+@app.get("/token")
+async def token():
+    print("Token endpoint called")
+    return "Health"

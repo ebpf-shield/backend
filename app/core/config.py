@@ -21,6 +21,7 @@ class JwtSettings(BaseSettings):
         env_file=".env",
         env_ignore_empty=True,
         extra="ignore",
+        env_prefix="JWT_",
     )
 
     SECRET_KEY: str

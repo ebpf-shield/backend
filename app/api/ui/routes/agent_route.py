@@ -1,6 +1,6 @@
 from typing import Annotated
 from beanie import PydanticObjectId
-from fastapi import APIRouter, Body, Path, Query
+from fastapi import APIRouter, Path, Query
 
 from app.api.errors.not_found_exception import NotFoundException
 from app.api.models.agent_model import Agent, AgentWithProcesses
@@ -18,14 +18,6 @@ async def find_all(
     return await agent_service.find_all(embed_query.embed_processes)
 
 
-@router.post("", description="Create a new agent")
-async def create(
-    agent: Annotated[Agent, Body()],
-    agent_service: CommonUIAgentService,
-):
-    return await agent_service.create(agent)
-
-
 @router.get(
     "/{agent_id}",
     description="Get agent by id",
@@ -41,13 +33,3 @@ async def find_by_id(
         raise NotFoundException(detail=f"Agent with id {agent_id} not found")
 
     return agent
-
-
-@router.patch("/{agent_id}", description="Update agent by id")
-async def update(
-    agent_id: Annotated[PydanticObjectId, Path()],
-    agent: Annotated[Agent, Body()],
-    agent_service: CommonUIAgentService,
-):
-    agent.id = agent_id
-    return await agent_service.update(agent)
