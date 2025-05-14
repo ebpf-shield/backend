@@ -5,11 +5,16 @@ from app.api.errors.conflict_exception import ConflictException
 from app.api.errors.email_already_exists_exception import EmailAlreadyExistsException
 from app.api.errors.invalid_password_exception import InvalidPasswordException
 from app.api.errors.no_user_with_email_exception import NoUserWithEmailException
-from app.api.models.user_model import UserLogin, UserRegister
+from app.api.ui.models.auth_model import (
+    BasicTokenPayload,
+    MemeberTokenPayload,
+)
+from app.api.ui.models.user_model import UserLogin, UserRegister
 from app.api.ui.services.auth_service import (
-    CommonAuthService,
+    UICommonAuthService,
 )
 from app.api.ui.services.jwt_service import CommonJwtService
+
 
 router = APIRouter(tags=["auth"])
 
@@ -17,7 +22,7 @@ router = APIRouter(tags=["auth"])
 @router.post("/register", description="Register a new user")
 async def register(
     user: Annotated[UserRegister, Body()],
-    auth_service: CommonAuthService,
+    auth_service: UICommonAuthService,
     jwt_service: CommonJwtService,
 ):
     try:
@@ -25,16 +30,22 @@ async def register(
     except EmailAlreadyExistsException as e:
         raise ConflictException(e.message)
 
-    token = await jwt_service.generate_token(
-        data={"email": inserted_user.email, "id": str(inserted_user.id)}
+    basic_token_payload = BasicTokenPayload(
+        email=inserted_user.email,
+        id=str(inserted_user.id),
     )
-    return {"access_token": token, "token_type": "bearer"}
+
+    token = jwt_service.generate_access_token(
+        data=basic_token_payload.model_dump(by_alias=True)
+    )
+
+    return token
 
 
 @router.post("/login", description="Login user")
 async def login(
     user_to_login: Annotated[UserLogin, Body()],
-    auth_service: CommonAuthService,
+    auth_service: UICommonAuthService,
     jwt_service: CommonJwtService,
 ):
     try:
@@ -44,10 +55,20 @@ async def login(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid email or password"
         )
 
-    token = await jwt_service.generate_token({"email": user.email, "id": str(user.id)})
-    return {"access_token": token, "token_type": "bearer"}
+    if user.organization_id is None:
+        token_payload = BasicTokenPayload(
+            email=user.email,
+            id=str(user.id),
+        )
+    else:
+        token_payload = MemeberTokenPayload(
+            email=user.email,
+            id=str(user.id),
+            organization_id=str(user.organization_id),
+        )
 
+    token = jwt_service.generate_access_token(
+        data=token_payload.model_dump(by_alias=True)
+    )
 
-@router.post("/token", description="Get token")
-def token():
-    return {"access_token": "fake_token", "token_type": "bearer"}
+    return token

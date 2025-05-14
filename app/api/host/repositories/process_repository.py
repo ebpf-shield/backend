@@ -8,7 +8,7 @@ import datetime as dt
 
 from app.api.models.process_model import (
     Process,
-    ProcessByNameWithRules,
+    ProcessByNameWithRulesAggregation,
     ProcessDocument,
     ProcessStatus,
 )
@@ -93,7 +93,7 @@ class HostProcessRepository:
                 {"$group": {"_id": "$command", "rules": {"$push": "$rules"}}},
                 {"$project": {"_id": 0, "command": "$_id", "rules": 1}},
             ],
-            projection_model=ProcessByNameWithRules,
+            projection_model=ProcessByNameWithRulesAggregation,
         ).to_list()
 
 

@@ -4,10 +4,13 @@ from pydantic import BaseModel, EmailStr, Field
 
 
 class User(BaseModel):
-    id: Optional[PydanticObjectId] = Field(alias="_id")
+    id: Optional[PydanticObjectId] = Field(alias="_id", default=None)
     name: str
     email: EmailStr
     password: str
+    organization_id: Optional[PydanticObjectId] = Field(
+        alias="organizationId", default=None
+    )
 
 
 class UserRegister(BaseModel):

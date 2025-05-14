@@ -35,7 +35,7 @@ origins = [
     "https://localhost.tiangolo.com",
     "http://localhost",
     "http://localhost:8080",
-    "*",
+    "http://localhost:5173",
 ]
 
 app.add_middleware(
@@ -49,4 +49,10 @@ app.add_middleware(
 
 @app.get("/health")
 async def health():
+    return "Health"
+
+
+@app.get("/token")
+async def token():
+    print("Token endpoint called")
     return "Health"
