@@ -5,6 +5,7 @@ from fastapi import Depends
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from app.api.models.agent_model import AgentDocument
+from app.api.models.organization_model import OrganizationDocument
 from app.api.models.process_model import ProcessDocument
 from app.api.models.rule_model import RuleDocument
 from app.api.ui.models.user_model import UserDocument
@@ -31,7 +32,7 @@ class MongoDBClientManager:
                     RuleDocument,
                     AgentDocument,
                     ProcessDocument,
-                    RuleDocument,
+                    OrganizationDocument,
                 ],
             )
             logger.info("Connected to mongoDB")
@@ -39,7 +40,7 @@ class MongoDBClientManager:
         except Exception as _e:
             print(_e)
             logger.error("Unable to connect to mongoDB")
-            print("Error")
+            raise _e
 
     async def close_mongo(self):
         if self._client is None:

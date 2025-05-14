@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, Body, Path, Query
+from fastapi import APIRouter, Body, Depends, Path, Query
 
 from app.api.errors.not_found_exception import NotFoundException
 from app.api.models.process_model import (
@@ -11,8 +11,9 @@ from app.api.models.process_model import (
 )
 from app.api.models.query.process_embed_query_model import ProcessEmbedQuery
 from app.api.ui.services.process_service import CommonUIProcessService
+from app.core.auth import JWTBearer
 
-router = APIRouter(tags=["process"])
+router = APIRouter(tags=["process"], dependencies=[Depends(JWTBearer())])
 
 
 @router.get(

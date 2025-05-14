@@ -8,7 +8,9 @@ class User(BaseModel):
     name: str
     email: EmailStr
     password: str
-    group_id: Optional[PydanticObjectId] = Field(alias="groupId", default=None)
+    organization_id: Optional[PydanticObjectId] = Field(
+        alias="organizationId", default=None
+    )
 
 
 class UserRegister(BaseModel):

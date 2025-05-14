@@ -9,8 +9,10 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    id: str = Field(alias="_id")
+    id: str
     email: str
+    exp: int = Field(description="Expiration time in seconds")
+    nbf: int = Field(description="Not before time in seconds")
 
 
 class TokenResponse(BaseModel):
