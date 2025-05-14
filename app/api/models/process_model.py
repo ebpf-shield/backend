@@ -46,7 +46,7 @@ class ProcessWithRules(Process):
     rules: list[RuleDocument] = Field(alias="rules", default=[])
 
 
-class ProcessByNameWithRules(BaseModel):
+class ProcessByNameWithRulesAggregation(BaseModel):
     command: str = Field(max_length=255)
     rules: list[RuleDocument] = Field(alias="rules", default=[])
 

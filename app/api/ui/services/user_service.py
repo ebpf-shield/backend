@@ -2,13 +2,16 @@ from typing import Annotated
 
 from fastapi import Depends
 from app.api.ui.models.user_model import User
-from app.api.ui.repositories.user_repository import CommonUserRepository, UserRepository
+from app.api.ui.repositories.user_repository import (
+    UICommonUserRepository,
+    UIUserRepository,
+)
 
 
 class UserService:
-    _user_repository: UserRepository
+    _user_repository: UIUserRepository
 
-    def __init__(self, user_repository: UserRepository):
+    def __init__(self, user_repository: UIUserRepository):
         self._user_repository = user_repository
 
     async def get_user_by_email(self, email: str):
@@ -18,7 +21,7 @@ class UserService:
         return await self._user_repository.create(user)
 
 
-def get_user_service(user_repository: CommonUserRepository):
+def get_user_service(user_repository: UICommonUserRepository):
     return UserService(user_repository=user_repository)
 
 

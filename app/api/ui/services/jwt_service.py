@@ -2,7 +2,7 @@ import datetime as dt
 from typing import Annotated, Any, Dict
 
 from fastapi import Depends
-from app.api.ui.models.auth_model import TokenData, TokenResponse
+from app.api.ui.models.auth_model import BasicTokenData, TokenResponse
 from app.core.config import jwt_settings
 
 import jwt
@@ -17,7 +17,10 @@ class JwtService:
                 algorithms=[jwt_settings.ALGORITHM],
             )
 
-            return TokenData(**payload)
+            if not isinstance(payload, dict):
+                return None
+
+            return payload
         except jwt.PyJWTError as _e:
             return None
 
@@ -54,11 +57,11 @@ CommonJwtService = Annotated[JwtService, Depends(get_jwt_service, use_cache=True
 def jwt_verify(
     token: str,
     jwt_service: CommonJwtService,
-) -> TokenData | None:
+) -> BasicTokenData | None:
     return jwt_service.verify_token(token=token)
 
 
 CommonJwtVerify = Annotated[
-    TokenData | None,
+    BasicTokenData | None,
     Depends(jwt_verify),
 ]

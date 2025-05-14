@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Token(BaseModel):
@@ -8,11 +8,32 @@ class Token(BaseModel):
     token_type: str
 
 
-class TokenData(BaseModel):
-    id: str
+class BasicTokenPayload(BaseModel):
     email: str
+    id: str
+
+
+class MemeberTokenPayload(BasicTokenPayload):
+    model_config = ConfigDict(
+        validate_by_name=True,
+        serialize_by_alias=True,
+        validate_by_alias=True,
+    )
+
+    organization_id: str = Field(alias="organizationId", description="Organization ID")
+
+
+class BaseTokenData(BaseModel):
     exp: int = Field(description="Expiration time in seconds")
     nbf: int = Field(description="Not before time in seconds")
+
+
+class BasicTokenData(BaseTokenData, BasicTokenPayload):
+    pass
+
+
+class MemberTokenData(BaseTokenData, MemeberTokenPayload):
+    pass
 
 
 class TokenResponse(BaseModel):
@@ -20,6 +41,10 @@ class TokenResponse(BaseModel):
     token_type: Literal["bearer"] = "bearer"
 
 
-class StateAuth(BaseModel):
+class BasicStateAuth(BaseModel):
     token: str
-    payload: TokenData
+    payload: BasicTokenData
+
+
+class MemberStateAuth(BasicStateAuth):
+    payload: MemberTokenData
