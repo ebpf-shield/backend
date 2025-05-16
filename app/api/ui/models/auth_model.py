@@ -11,6 +11,7 @@ class Token(BaseModel):
 class BasicTokenPayload(BaseModel):
     email: str
     id: str
+    name: str
 
 
 class MemeberTokenPayload(BasicTokenPayload):

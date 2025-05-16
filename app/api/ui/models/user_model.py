@@ -29,3 +29,4 @@ class UserDocument(Document, User):
 
     class Settings:
         name = "users"
+        keep_nulls = False

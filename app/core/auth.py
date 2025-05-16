@@ -22,7 +22,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="./api/ui/auth/token")
 
 
 invalid_or_expired_token = HTTPException(
-    status_code=403,
+    status_code=401,
     detail="Invalid token or expired token.",
     headers={"WWW-Authenticate": "Bearer"},
 )
@@ -45,7 +45,7 @@ class JWTBearer(HTTPBearer):
         if credentials:
             if not credentials.scheme == "Bearer":
                 raise HTTPException(
-                    status_code=403, detail="Invalid authentication scheme."
+                    status_code=401, detail="Invalid authentication scheme."
                 )
 
             try:
@@ -63,7 +63,7 @@ class JWTBearer(HTTPBearer):
 
             return credentials
         else:
-            raise HTTPException(status_code=403, detail="Invalid authorization code.")
+            raise HTTPException(status_code=401, detail="Invalid authorization code.")
 
 
 def get_auth_state(request: Request):
@@ -90,7 +90,9 @@ def get_auth_state_with_org(
         raise invalid_or_expired_token
 
     if "organization_id" not in auth["payload"]:
-        raise invalid_or_expired_token
+        raise HTTPException(
+            status_code=403, detail="Access to organization resources forbidden."
+        )
 
     state = MemberStateAuth(**request.state.auth)
 

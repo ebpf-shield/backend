@@ -33,6 +33,7 @@ async def register(
     basic_token_payload = BasicTokenPayload(
         email=inserted_user.email,
         id=str(inserted_user.id),
+        name=inserted_user.name,
     )
 
     token = jwt_service.generate_access_token(
@@ -55,16 +56,18 @@ async def login(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid email or password"
         )
 
+    basic_token_payload = BasicTokenPayload(
+        email=user.email,
+        id=str(user.id),
+        name=user.name,
+    )
+
     if user.organization_id is None:
-        token_payload = BasicTokenPayload(
-            email=user.email,
-            id=str(user.id),
-        )
+        token_payload = basic_token_payload
     else:
         token_payload = MemeberTokenPayload(
-            email=user.email,
-            id=str(user.id),
             organization_id=str(user.organization_id),
+            **basic_token_payload.model_dump(by_alias=True),
         )
 
     token = jwt_service.generate_access_token(
