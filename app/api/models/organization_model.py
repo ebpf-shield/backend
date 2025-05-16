@@ -9,7 +9,7 @@ class Organization(BaseModel):
     name: str = Field(min_length=4, max_length=50)
     description: Optional[str] = Field(min_length=4, max_length=50, default=None)
     created_at: dt.datetime = Field(alias="createdAt", default_factory=dt.datetime.now)
-    updated_at: dt.datetime = Field(alias="createdAt", default_factory=dt.datetime.now)
+    updated_at: dt.datetime = Field(alias="updatedAt", default_factory=dt.datetime.now)
 
 
 class OrganizationDocument(Document, Organization):
