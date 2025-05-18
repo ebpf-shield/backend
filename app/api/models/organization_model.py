@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 
 class Organization(BaseModel):
-    id: Optional[PydanticObjectId] = Field(alias="_id", default=None)
+    id: PydanticObjectId = Field(alias="_id", default_factory=PydanticObjectId)
     name: str = Field(min_length=4, max_length=50)
     description: Optional[str] = Field(min_length=4, max_length=50, default=None)
     created_at: dt.datetime = Field(alias="createdAt", default_factory=dt.datetime.now)
@@ -18,3 +18,7 @@ class OrganizationDocument(Document, Organization):
     class Settings:
         name = "organizations"
         keep_nulls = False
+
+
+class CreateOrganizationDTO(Organization):
+    id: Optional[PydanticObjectId] = None

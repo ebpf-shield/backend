@@ -9,13 +9,13 @@ from app.api.models.process_model import (
     ProcessDocument,
     ProcessWithRules,
 )
-from app.core.db import CommonMongoClient
+from app.core.db import CommonDBClientManager
 
 
 class UIProcessRepository:
     _client: AsyncIOMotorClient
 
-    def __init__(self, client: CommonMongoClient):
+    def __init__(self, client: CommonDBClientManager):
         self._client = client
 
     async def get_all_agent_id(self, agent_id: PydanticObjectId):
@@ -60,7 +60,7 @@ class UIProcessRepository:
 
 
 def get_process_repository(
-    client: CommonMongoClient,
+    client: CommonDBClientManager,
 ):
     return UIProcessRepository(client=client)
 

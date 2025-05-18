@@ -89,13 +89,7 @@ def get_auth_state_with_org(
     if not auth:
         raise invalid_or_expired_token
 
-    if "organization_id" not in auth["payload"]:
-        raise HTTPException(
-            status_code=403, detail="Access to organization resources forbidden."
-        )
-
     state = MemberStateAuth(**request.state.auth)
-
     return state
 
 

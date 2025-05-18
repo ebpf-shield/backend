@@ -18,7 +18,7 @@ class Agent(BaseModel):
     processes_to_exclude: list[str] = Field(
         alias="processesToExclude", default=["kworker"]
     )
-    organization_id: PydanticObjectId = Field(alias="organizationId")
+    # organization_id: PydanticObjectId = Field(alias="organizationId")
 
 
 class AgentDocument(Document, Agent):

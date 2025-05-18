@@ -31,7 +31,7 @@ class Process(BaseModel):
         alias="updatedAt", default_factory=datetime.datetime.now
     )
     status: Optional[ProcessStatus] = Field(default=ProcessStatus.RUNNING)
-    organization_id: PydanticObjectId = Field(alias="organizationId")
+    # organization_id: PydanticObjectId = Field(alias="organizationId")
 
 
 class ProcessDocument(Document, Process):

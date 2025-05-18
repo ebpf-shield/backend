@@ -30,3 +30,12 @@ class UserDocument(Document, User):
     class Settings:
         name = "users"
         keep_nulls = False
+
+
+class GetUserDTO(BaseModel):
+    id: PydanticObjectId = Field(alias="_id")
+    email: str
+    name: str
+    organization_id: PydanticObjectId | None = Field(
+        alias="organizationId", default=None
+    )

@@ -15,7 +15,7 @@ from app.core.config import settings
 logger = logging.getLogger(__name__)
 
 
-class MongoDBClientManager:
+class DBClientManager:
     _client: AsyncIOMotorClient | None = None
 
     @property
@@ -63,7 +63,13 @@ class MongoDBClientManager:
         return self.mongo_client
 
 
-mongo_client_manager = MongoDBClientManager()
-CommonMongoClient = Annotated[
-    AsyncIOMotorClient, Depends(mongo_client_manager.get_mongo_client, use_cache=True)
+__monogo_client = DBClientManager()
+
+
+def get_mongo_client_manager() -> DBClientManager:
+    return __monogo_client
+
+
+CommonDBClientManager = Annotated[
+    AsyncIOMotorClient, Depends(get_mongo_client_manager, use_cache=True)
 ]

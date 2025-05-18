@@ -2,7 +2,7 @@ from typing import Annotated
 from beanie import PydanticObjectId
 from fastapi import APIRouter, Body, Path
 
-from app.api.models.organization_model import Organization
+from app.api.models.organization_model import CreateOrganizationDTO
 from app.api.ui.services.organization_service import CommonUIOrganizationService
 
 
@@ -14,7 +14,7 @@ router = APIRouter(tags=["organization"])
     description="Create a new organization",
 )
 async def create(
-    organization: Annotated[Organization, Body()],
+    organization: Annotated[CreateOrganizationDTO, Body()],
     organization_service: CommonUIOrganizationService,
 ):
     return await organization_service.create(organization)
