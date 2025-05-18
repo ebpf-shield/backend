@@ -9,7 +9,7 @@ from app.api.ui.repositories.rule_repository import (
 )
 
 
-class RuleService:
+class UIRuleService:
     _rule_repository: UIRuleRepository
 
     def __init__(self, rule_repository: UIRuleRepository):
@@ -32,7 +32,9 @@ class RuleService:
 
 
 def get_rule_service(rule_repository: CommonUIRuleRepository):
-    return RuleService(rule_repository=rule_repository)
+    return UIRuleService(rule_repository=rule_repository)
 
 
-CommonRuleService = Annotated[RuleService, Depends(get_rule_service, use_cache=True)]
+CommonUIRuleService = Annotated[
+    UIRuleService, Depends(get_rule_service, use_cache=True)
+]

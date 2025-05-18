@@ -18,9 +18,9 @@ class DashboardRepository:
         return await ProcessDocument.aggregate(
             [
                 {"$group": {"_id": "$command", "count": {"$sum": "$count"}}},
+                {"$project": {"name": "$_id", "count": 1, "_id": 0}},
                 {"$sort": {"count": -1}},
                 {"$limit": 10},
-                {"$project": {"name": "$_id", "count": 1, "_id": 0}},
             ],
             CommonProcessesInAgentsAggregation,
         ).to_list()
@@ -40,13 +40,17 @@ class DashboardRepository:
                 {"$match": {"rulesCount": {"$gt": 0}}},
                 {"$group": {"_id": "$command", "rulesCount": {"$sum": "$rulesCount"}}},
                 {"$project": {"name": "$_id", "rulesCount": 1, "_id": 0}},
+                {"$sort": {"rulesCount": -1}},
                 {"$limit": 10},
             ]
         ).to_list()
 
     async def rules_by_chain(self):
         return await RuleDocument.aggregate(
-            [{"$group": {"_id": "$chain", "count": {"$sum": 1}}}],
+            [
+                {"$group": {"_id": "$chain", "count": {"$sum": 1}}},
+                {"$sort": {"count": -1}},
+            ],
             RulesByChainAggregation,
         ).to_list()
 

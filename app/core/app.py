@@ -5,7 +5,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.errors.validation_error import request_validation_exception_handler
-from app.core.db import mongo_client_manager
+from app.core.db import get_mongo_client_manager
 from app.core.logger import setup_logger
 from ..api.ui.routes import api_router as ui_api_router
 from ..api.host.routes import api_router as host_api_router
@@ -14,9 +14,11 @@ from ..api.host.routes import api_router as host_api_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     setup_logger()
-    await mongo_client_manager.start_async_mongo()
+    db = get_mongo_client_manager()
+
+    await db.start_async_mongo()
     yield
-    await mongo_client_manager.close_mongo()
+    await db.close_mongo()
 
 
 app = FastAPI(title="ebShield", lifespan=lifespan)
@@ -35,7 +37,8 @@ origins = [
     "https://localhost.tiangolo.com",
     "http://localhost",
     "http://localhost:8080",
-    "*",
+    "http://localhost:5173",
+    "http://localhost:4173",
 ]
 
 app.add_middleware(
@@ -49,4 +52,10 @@ app.add_middleware(
 
 @app.get("/health")
 async def health():
+    return "Health"
+
+
+@app.get("/token")
+async def token():
+    print("Token endpoint called")
     return "Health"
