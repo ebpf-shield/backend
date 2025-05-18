@@ -22,3 +22,7 @@ class OrganizationDocument(Document, Organization):
 
 class CreateOrganizationDTO(Organization):
     id: Optional[PydanticObjectId] = None
+
+
+class OrganizationInvitationDTO(BaseModel):
+    email: str = Field(min_length=4, max_length=50)

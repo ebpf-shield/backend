@@ -25,6 +25,7 @@ async def read_users_me(
         raise NotFoundException(e.message)
 
 
+# TODO? I'm not 100% sure this is the right place for this route
 @router.post("/organization", description="Create organization and assign to user")
 async def create_organization(
     auth: CommonRequestStateAuth,
