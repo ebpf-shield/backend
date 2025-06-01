@@ -29,7 +29,9 @@ class UIAgentService:
     async def create(self, agent: Agent):
         return await self._agent_repository.create(agent)
 
-    async def find_all(self, embed_processes: bool = False):
+    async def find_all(
+        self, organization_id: PydanticObjectId, embed_processes: bool = False
+    ):
         if embed_processes:
             agents = await self._agent_repository.get_all_with_processes()
             return agents

@@ -1,9 +1,10 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from app.api.ui.services.dashboard_service import CommonDashboardService
+from app.core.auth import JWTBearer
 
 
-router = APIRouter(tags=["dashboard"])
+router = APIRouter(tags=["dashboard"], dependencies=[Depends(JWTBearer())])
 
 
 @router.get("/common-processes", description="Most common processes by count")

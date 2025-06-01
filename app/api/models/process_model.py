@@ -31,6 +31,7 @@ class Process(BaseModel):
         alias="updatedAt", default_factory=datetime.datetime.now
     )
     status: Optional[ProcessStatus] = Field(default=ProcessStatus.RUNNING)
+    # organization_id: PydanticObjectId = Field(alias="organizationId")
 
 
 class ProcessDocument(Document, Process):
@@ -45,7 +46,7 @@ class ProcessWithRules(Process):
     rules: list[RuleDocument] = Field(alias="rules", default=[])
 
 
-class ProcessByNameWithRules(BaseModel):
+class ProcessByNameWithRulesAggregation(BaseModel):
     command: str = Field(max_length=255)
     rules: list[RuleDocument] = Field(alias="rules", default=[])
 

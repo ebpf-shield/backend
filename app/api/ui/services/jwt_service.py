@@ -1,34 +1,50 @@
-import datetime
+import datetime as dt
 from typing import Annotated, Any, Dict
 
 from fastapi import Depends
+from app.api.ui.models.auth_model import BasicTokenData, TokenResponse
 from app.core.config import jwt_settings
 
 import jwt
 
 
 class JwtService:
-    async def decode(self):
-        pass
-
-    async def generate_token(self, data: Dict[Any, Any]) -> str:
-        expire = datetime.datetime.now() + datetime.timedelta(
-            minutes=jwt_settings.ACCESS_TOKEN_EXPIRE_MINUTES
-        )
-
-        data.update({"exp": expire, "nbf": datetime.datetime.now()})
-
-        return jwt.encode(
-            data, jwt_settings.SECRET_KEY, algorithm=jwt_settings.ALGORITHM
-        )
-
-    async def verify(token: str) -> Dict[Any, Any] | None:
+    def verify_token(self, token: str):
         try:
-            return jwt.decode(
-                token, jwt_settings.SECRET_KEY, algorithms=[jwt_settings.ALGORITHM]
+            payload = jwt.decode(
+                token,
+                key=jwt_settings.SECRET_KEY,
+                algorithms=[jwt_settings.ALGORITHM],
             )
-        except jwt.PyJWTError:
+
+            if not isinstance(payload, dict):
+                return None
+
+            return payload
+        except jwt.PyJWTError as _e:
             return None
+
+    def generate_access_token(
+        self, data: Dict[Any, Any], expires_delta: dt.timedelta | None = None
+    ) -> str:
+        to_encode = data.copy()
+        if expires_delta:
+            expire = dt.datetime.now(dt.timezone.utc) + expires_delta
+        else:
+            expire = dt.datetime.now(dt.timezone.utc) + dt.timedelta(
+                minutes=jwt_settings.ACCESS_TOKEN_EXPIRE_MINUTES
+            )
+
+        to_encode.update({"exp": expire, "nbf": dt.datetime.now(dt.timezone.utc)})
+
+        token = jwt.encode(
+            to_encode, key=jwt_settings.SECRET_KEY, algorithm=jwt_settings.ALGORITHM
+        )
+
+        return TokenResponse(
+            access_token=token,
+            token_type="bearer",
+        )
 
 
 def get_jwt_service():
@@ -36,3 +52,16 @@ def get_jwt_service():
 
 
 CommonJwtService = Annotated[JwtService, Depends(get_jwt_service, use_cache=True)]
+
+
+def jwt_verify(
+    token: str,
+    jwt_service: CommonJwtService,
+) -> BasicTokenData | None:
+    return jwt_service.verify_token(token=token)
+
+
+CommonJwtVerify = Annotated[
+    BasicTokenData | None,
+    Depends(jwt_verify),
+]
