@@ -121,6 +121,28 @@ async def total_rules():
     return {"drop": drop_count, "allow": allow_count}
 
 
-# ------------------------------------------------------------
-# (2) Any further existing dashboard routes follow here.
-# ------------------------------------------------------------
+# ────────────────────────────────────────────────────────────────────────────────
+# (2) NEW: Return a list of every agent’s external IP address
+# ────────────────────────────────────────────────────────────────────────────────
+
+@router.get("/agent-ips", summary="Get list of all agent external IPs")
+async def agent_ips():
+    """
+    Returns JSON:
+      [
+        "203.0.113.10",
+        "198.51.100.45",
+        ...
+      ]
+    (Every AgentDocument.external_ip in the database)
+    """
+    try:
+        # Project only the "external_ip" field from every agent
+        # If AgentDocument has .external_ip as field name:
+        docs = await AgentDocument.find_all().to_list()
+        ip_list = [a.external_ip for a in docs if getattr(a, "external_ip", None)]
+        print("OK")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch agent external_ips: {e}")
+
+    return ip_list
