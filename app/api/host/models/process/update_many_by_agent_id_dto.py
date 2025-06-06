@@ -1,7 +1,9 @@
-from pydantic import BaseModel
+from beanie import PydanticObjectId
+from pydantic import BaseModel, Field
 
-from app.api.models.process_model import ProcessWithoutAgentId
+from app.api.models.process_model import InnerProcess
 
 
 class UpdateManyByAgentIdDTO(BaseModel):
-    processes: list[ProcessWithoutAgentId]
+    processes: list[InnerProcess]
+    organization_id: PydanticObjectId = Field(alias="organizationId")

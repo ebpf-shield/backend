@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, Body, Depends, Path, Query
+from fastapi import APIRouter, Depends, Path, Query
 
 from app.api.errors.not_found_exception import NotFoundException
 from app.api.models.process_model import (
@@ -43,17 +43,3 @@ async def find_by_id(
         raise NotFoundException(detail=f"Process with id {process_id} not found")
 
     return process
-
-
-@router.post("", description="Create a new process")
-async def create(
-    process: Annotated[Process, Body()], process_service: CommonUIProcessService
-):
-    return await process_service.create(process)
-
-
-@router.patch("", description="Update a process")
-async def update(
-    process: Annotated[Process, Body()], process_service: CommonUIProcessService
-):
-    return await process_service.update(process)

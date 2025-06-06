@@ -97,3 +97,5 @@ CommonRequestStateAuthWithOrg = Annotated[
     MemberStateAuth,
     Depends(get_auth_state_with_org),
 ]
+
+# TODO We can createa a populated state auth

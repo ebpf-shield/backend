@@ -39,6 +39,7 @@ class UIUserService:
     async def create_organization_by_user_id(
         self, user_id: PydanticObjectId, organization: CreateOrganizationDTO
     ):
+        # async with await self._process_repository._client.get_session() as session:
         session = await self._db.get_session()
         async with session.start_transaction():
             organization = await self._organization_repository.create(

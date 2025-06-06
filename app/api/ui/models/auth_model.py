@@ -8,6 +8,7 @@ class Token(BaseModel):
     token_type: str
 
 
+# It has to be str and not PydanticObjectId because it is used in JWT
 class BasicTokenPayload(BaseModel):
     email: str
     id: str
