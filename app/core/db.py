@@ -71,5 +71,5 @@ def get_mongo_client_manager() -> DBClientManager:
 
 
 CommonDBClientManager = Annotated[
-    AsyncIOMotorClient, Depends(get_mongo_client_manager, use_cache=True)
+    DBClientManager, Depends(get_mongo_client_manager, use_cache=True)
 ]

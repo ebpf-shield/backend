@@ -25,7 +25,11 @@ async def update_many_by_agent_id(
     if not agent:
         raise NotFoundException(detail=f"Agent with id {agent_id} not found")
 
-    res = await process_service.update_many_by_agent_id(agent_id, body.processes)
+    res = await process_service.update_many_by_agent_id(
+        agent_id=agent_id,
+        organization_id=body.organization_id,
+        processes=body.processes,
+    )
 
     if len(res) == 2:
         return {
