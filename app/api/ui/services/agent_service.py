@@ -33,10 +33,12 @@ class UIAgentService:
         self, organization_id: PydanticObjectId, embed_processes: bool = False
     ):
         if embed_processes:
-            agents = await self._agent_repository.get_all_with_processes()
+            agents = await self._agent_repository.get_all_with_processes(
+                organization_id=organization_id
+            )
             return agents
 
-        agents = await self._agent_repository.get_all()
+        agents = await self._agent_repository.get_all(organization_id=organization_id)
         return agents
 
     async def find_by_id(
