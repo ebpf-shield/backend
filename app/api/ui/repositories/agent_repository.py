@@ -10,12 +10,15 @@ class UIAgentRepository:
     def __init__(self):
         pass
 
-    async def get_all(self):
-        return await AgentDocument.all().to_list()
+    async def get_all(self, organization_id: PydanticObjectId):
+        return await AgentDocument.find(
+            {Agent.organization_id: organization_id}
+        ).to_list()
 
-    async def get_all_with_processes(self):
+    async def get_all_with_processes(self, organization_id: PydanticObjectId):
         return await AgentDocument.aggregate(
             [
+                {"$match": {"organizationId": organization_id}},
                 {
                     "$lookup": {
                         "from": "processes",
@@ -23,7 +26,7 @@ class UIAgentRepository:
                         "foreignField": "agentId",
                         "as": "processes",
                     }
-                }
+                },
             ],
             projection_model=AgentWithProcesses,
         ).to_list()

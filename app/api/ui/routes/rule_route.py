@@ -1,25 +1,26 @@
 from typing import Annotated
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, Body, Path
+from fastapi import APIRouter, Body, Depends, Path
 
 from app.api.errors.not_found_exception import NotFoundException
 from app.api.models.rule_model import PartialRuleBody, Rule, RuleBody
-from app.api.ui.services.rule_service import CommonRuleService
+from app.api.ui.services.rule_service import CommonUIRuleService
+from app.core.auth import JWTBearer
 
-router = APIRouter(tags=["rule"])
+router = APIRouter(tags=["rule"], dependencies=[Depends(JWTBearer())])
 
 
 @router.get("/process/{process_id}", description="Get rule by process id")
 async def find_all_by_process_id(
     process_id: Annotated[PydanticObjectId, Path(description="Process id")],
-    rule_service: CommonRuleService,
+    rule_service: CommonUIRuleService,
 ):
     return await rule_service.find_all_by_process_id(process_id)
 
 
 @router.post("", description="Create a new rule")
-async def create(rule: Annotated[RuleBody, Body()], rule_service: CommonRuleService):
+async def create(rule: Annotated[RuleBody, Body()], rule_service: CommonUIRuleService):
     return await rule_service.create(rule)
 
 
@@ -30,7 +31,7 @@ async def create(rule: Annotated[RuleBody, Body()], rule_service: CommonRuleServ
 )
 async def find_by_id(
     rule_id: Annotated[PydanticObjectId, Path(description="Rule id")],
-    rule_service: CommonRuleService,
+    rule_service: CommonUIRuleService,
 ):
     rule = await rule_service.find_by_id(rule_id)
     if not rule:
@@ -46,7 +47,7 @@ async def find_by_id(
 async def update(
     rule_id: Annotated[PydanticObjectId, Path(description="Rule id")],
     rule: Annotated[PartialRuleBody, Body()],
-    rule_service: CommonRuleService,
+    rule_service: CommonUIRuleService,
 ):
     update_res = await rule_service.update(rule_id, rule)
     return {
@@ -58,7 +59,7 @@ async def update(
 @router.delete("/{rule_id}", description="Delete rule by id")
 async def delete(
     rule_id: Annotated[PydanticObjectId, Path(description="Rule id")],
-    rule_service: CommonRuleService,
+    rule_service: CommonUIRuleService,
 ):
     res = await rule_service.delete(rule_id)
     if not res:

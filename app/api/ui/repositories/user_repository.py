@@ -1,26 +1,55 @@
 from typing import Annotated
+
 from beanie import PydanticObjectId
 from fastapi import Depends
+from motor.motor_asyncio import AsyncIOMotorClient
 
-from app.api.models.user_model import User, UserDocument
+from app.api.errors.no_user_with_email_exception import NoUserWithEmailException
+from app.api.errors.user_have_organization import UserHaveOrgException
+from app.api.ui.models.user_model import GetUserDTO, UserDocument
 
 
-class UserRepository:
+class UIUserRepository:
     async def get_by_email(self, email: str):
-        return await UserDocument.find_one({"email": email})
+        user = await UserDocument.find_one({"email": email}).project(GetUserDTO)
 
-    async def get_by_id(self, user_id: PydanticObjectId) -> None:
-        return await UserDocument.get(user_id)
+        if not user:
+            raise NoUserWithEmailException
 
-    async def create(self, user: User):
-        user_to_insert = UserDocument(**user.model_dump(by_alias=True))
-        return await user_to_insert.insert()
+        return user
+
+    async def get_by_id(self, user_id: PydanticObjectId):
+        user = await UserDocument.find_one({"_id": user_id}).project(GetUserDTO)
+
+        if not user:
+            raise NoUserWithEmailException
+
+        return user
+
+    async def update_organization_by_user_id(
+        self,
+        organization_id: PydanticObjectId,
+        user_id: PydanticObjectId,
+        session: AsyncIOMotorClient = None,
+    ):
+        user = await UserDocument.find_one({"_id": user_id}, session=session)
+
+        if not user:
+            raise NoUserWithEmailException
+
+        if user.organization_id:
+            raise UserHaveOrgException
+
+        user.organization_id = organization_id
+        new_user = await user.save(session=session)
+
+        return new_user
 
 
 def get_user_repository():
-    return UserRepository()
+    return UIUserRepository()
 
 
-CommonUserRepository = Annotated[
-    UserRepository, Depends(get_user_repository, use_cache=True)
+UICommonUserRepository = Annotated[
+    UIUserRepository, Depends(get_user_repository, use_cache=True)
 ]

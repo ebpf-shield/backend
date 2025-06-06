@@ -48,6 +48,7 @@ class BaseRule(BaseModel):
         default_factory=datetime.datetime.now, alias="updatedAt"
     )
     process_id: PydanticObjectId = Field(alias="processId")
+    organization_id: PydanticObjectId = Field(alias="organizationId")
 
 
 # Unfortunately, we have to redefine the fields here.

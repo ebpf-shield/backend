@@ -8,7 +8,7 @@ from app.api.host.repositories.process_repository import (
     CommonHostProcessRepository,
     HostProcessRepository,
 )
-from app.api.models.process_model import Process, ProcessWithoutAgentId
+from app.api.models.process_model import Process, InnerProcess
 
 
 class HostProcessService:
@@ -17,8 +17,12 @@ class HostProcessService:
     def __init__(self, process_repository: HostProcessRepository):
         self._process_repository = process_repository
 
+    # We can use UpdateManyByAgentIdDTO
     async def update_many_by_agent_id(
-        self, agent_id: PydanticObjectId, processes: list[ProcessWithoutAgentId]
+        self,
+        agent_id: PydanticObjectId,
+        organization_id: PydanticObjectId,
+        processes: list[InnerProcess],
     ) -> (
         tuple[UpdateResult, UpdateResult]
         | tuple[InsertManyResult, UpdateResult, UpdateResult]
@@ -50,7 +54,7 @@ class HostProcessService:
                 the first being an InsertManyResult representing the insertion result, followed by
                 two UpdateResult objects for the "stopped" and "running" updates, respectively.
         """
-        async with await self._process_repository._client.start_session() as session:
+        async with await self._process_repository._client.get_session() as session:
             async with session.start_transaction():
                 new_processes_commands = [process.command for process in processes]
                 exsiting_processes_by_commands = await self._process_repository.get_existing_by_agent_id_and_commands(
@@ -87,6 +91,7 @@ class HostProcessService:
                 for process in non_exsisting_processes:
                     new_process = Process(**process.model_dump(by_alias=True))
                     new_process.agent_id = agent_id
+                    new_process.organization_id = organization_id
                     non_existing_processes_with_agent_id.append(new_process)
 
                 insert_many = await self._process_repository.create_many(

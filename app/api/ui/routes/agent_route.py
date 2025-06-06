@@ -1,29 +1,32 @@
 from typing import Annotated
 from beanie import PydanticObjectId
-from fastapi import APIRouter, Body, Path, Query
+from fastapi import APIRouter, Depends, Path, Query
 
 from app.api.errors.not_found_exception import NotFoundException
 from app.api.models.agent_model import Agent, AgentWithProcesses
 from app.api.ui.services.agent_service import CommonUIAgentService
 from app.api.models.query.agent_embed_query_model import AgentEmbedQuery
+from app.core.auth import (
+    CommonRequestStateAuth,
+    CommonRequestStateAuthWithOrg,
+    JWTBearer,
+)
 
-router = APIRouter(tags=["agent"])
+router = APIRouter(tags=["agent"], dependencies=[Depends(JWTBearer())])
 
 
 @router.get("", description="Get all agents")
 async def find_all(
     agent_service: CommonUIAgentService,
     embed_query: Annotated[AgentEmbedQuery, Query()],
+    auth: CommonRequestStateAuthWithOrg,
 ):
-    return await agent_service.find_all(embed_query.embed_processes)
+    organization_id = PydanticObjectId(auth.payload.organization_id)
 
-
-@router.post("", description="Create a new agent")
-async def create(
-    agent: Annotated[Agent, Body()],
-    agent_service: CommonUIAgentService,
-):
-    return await agent_service.create(agent)
+    return await agent_service.find_all(
+        organization_id=organization_id,
+        embed_processes=embed_query.embed_processes,
+    )
 
 
 @router.get(
@@ -35,19 +38,11 @@ async def find_by_id(
     agent_id: Annotated[PydanticObjectId, Path()],
     embed_query: Annotated[AgentEmbedQuery, Query()],
     agent_service: CommonUIAgentService,
+    auth: CommonRequestStateAuth,
 ):
     agent = await agent_service.find_by_id(agent_id, embed_query.embed_processes)
+
     if not agent:
         raise NotFoundException(detail=f"Agent with id {agent_id} not found")
 
     return agent
-
-
-@router.patch("/{agent_id}", description="Update agent by id")
-async def update(
-    agent_id: Annotated[PydanticObjectId, Path()],
-    agent: Annotated[Agent, Body()],
-    agent_service: CommonUIAgentService,
-):
-    agent.id = agent_id
-    return await agent_service.update(agent)

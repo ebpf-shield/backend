@@ -3,23 +3,23 @@ from typing import Annotated
 from beanie import PydanticObjectId
 from beanie.operators import In, NotIn, Set
 from fastapi import Depends
-from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorClientSession
+from motor.motor_asyncio import AsyncIOMotorClientSession
 import datetime as dt
 
 from app.api.models.process_model import (
     Process,
-    ProcessByNameWithRules,
+    ProcessByNameWithRulesAggregation,
     ProcessDocument,
     ProcessStatus,
 )
-from app.core.db import CommonMongoClient
+from app.core.db import CommonDBClientManager, DBClientManager
 from pymongo.results import UpdateResult
 
 
 class HostProcessRepository:
-    _client: AsyncIOMotorClient
+    _client: DBClientManager
 
-    def __init__(self, client: CommonMongoClient):
+    def __init__(self, client: CommonDBClientManager):
         self._client = client
 
     async def get_existing_by_agent_id_and_commands(
@@ -93,11 +93,11 @@ class HostProcessRepository:
                 {"$group": {"_id": "$command", "rules": {"$push": "$rules"}}},
                 {"$project": {"_id": 0, "command": "$_id", "rules": 1}},
             ],
-            projection_model=ProcessByNameWithRules,
+            projection_model=ProcessByNameWithRulesAggregation,
         ).to_list()
 
 
-def get_process_repository(client: CommonMongoClient):
+def get_process_repository(client: CommonDBClientManager):
     return HostProcessRepository(client=client)
 
 
