@@ -19,7 +19,7 @@ class Agent(BaseModel):
         alias="processesToExclude", default=["kworker"]
     )
     external_ip: Optional[str] = None
-    # organization_id: PydanticObjectId = Field(alias="organizationId")
+    organization_id: PydanticObjectId = Field(alias="organizationId")
 
 
 class AgentDocument(Document, Agent):

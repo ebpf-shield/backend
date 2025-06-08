@@ -31,7 +31,7 @@ class Process(BaseModel):
         alias="updatedAt", default_factory=datetime.datetime.now
     )
     status: Optional[ProcessStatus] = Field(default=ProcessStatus.RUNNING)
-    # organization_id: PydanticObjectId = Field(alias="organizationId")
+    organization_id: PydanticObjectId = Field(alias="organizationId")
 
 
 class ProcessDocument(Document, Process):
@@ -51,5 +51,8 @@ class ProcessByNameWithRulesAggregation(BaseModel):
     rules: list[RuleDocument] = Field(alias="rules", default=[])
 
 
-class ProcessWithoutAgentId(Process):
+class InnerProcess(Process):
     agent_id: Optional[PydanticObjectId] = Field(alias="agentId", default=None)
+    organization_id: Optional[PydanticObjectId] = Field(
+        alias="organizationId", default=None
+    )

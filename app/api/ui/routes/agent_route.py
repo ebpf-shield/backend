@@ -21,8 +21,10 @@ async def find_all(
     embed_query: Annotated[AgentEmbedQuery, Query()],
     auth: CommonRequestStateAuthWithOrg,
 ):
+    organization_id = PydanticObjectId(auth.payload.organization_id)
+
     return await agent_service.find_all(
-        organization_id=auth.payload.organization_id,
+        organization_id=organization_id,
         embed_processes=embed_query.embed_processes,
     )
 
@@ -39,6 +41,7 @@ async def find_by_id(
     auth: CommonRequestStateAuth,
 ):
     agent = await agent_service.find_by_id(agent_id, embed_query.embed_processes)
+
     if not agent:
         raise NotFoundException(detail=f"Agent with id {agent_id} not found")
 

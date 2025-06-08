@@ -3,7 +3,7 @@ from typing import Annotated
 from beanie import PydanticObjectId
 from beanie.operators import In, NotIn, Set
 from fastapi import Depends
-from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorClientSession
+from motor.motor_asyncio import AsyncIOMotorClientSession
 import datetime as dt
 
 from app.api.models.process_model import (
@@ -12,12 +12,12 @@ from app.api.models.process_model import (
     ProcessDocument,
     ProcessStatus,
 )
-from app.core.db import CommonDBClientManager
+from app.core.db import CommonDBClientManager, DBClientManager
 from pymongo.results import UpdateResult
 
 
 class HostProcessRepository:
-    _client: AsyncIOMotorClient
+    _client: DBClientManager
 
     def __init__(self, client: CommonDBClientManager):
         self._client = client
