@@ -2,9 +2,11 @@ from typing import Annotated
 
 from fastapi import Depends
 
+from app.api.models.agent_model import AgentDocument
 from app.api.models.process_model import ProcessDocument
 from app.api.models.rule_model import RuleDocument
 from app.api.ui.models.dashboard_model import (
+    AgentLocationProjection,
     CommonProcessesInAgentsAggregation,
     RulesByChainAggregation,
 )
@@ -53,6 +55,18 @@ class DashboardRepository:
             ],
             RulesByChainAggregation,
         ).to_list()
+
+    async def agent_locations(self):
+        """
+        Returns a list of all agent external IPs.
+        """
+        return (
+            await AgentDocument.find(
+                {"geolocationProperties": {"$exists": True}},
+            )
+            .project(AgentLocationProjection)
+            .to_list()
+        )
 
 
 def get_dashboard_repository():

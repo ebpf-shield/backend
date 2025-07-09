@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     DB_NAME: str
     PORT: int
     HOST: str
+    GEO_IP_API_KEY: str
 
 
 class JwtSettings(BaseSettings):

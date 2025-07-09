@@ -23,6 +23,9 @@ class DashboardService:
     async def rules_by_chain(self):
         return await self._dashboard_repository.rules_by_chain()
 
+    async def agent_locations(self):
+        return await self._dashboard_repository.agent_locations()
+
 
 def get_dashboard_service(dashboard_repository: CommonDashboardRepository):
     return DashboardService(dashboard_repository=dashboard_repository)

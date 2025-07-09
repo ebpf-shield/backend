@@ -1,17 +1,12 @@
 from fastapi import APIRouter, Depends
 
 from app.api.errors.internal_server_error import InternalServerErrorException
+from app.api.models.agent_model import AgentDocument
+from app.api.models.process_model import ProcessDocument
 from app.api.ui.models.user_model import UserDocument
 from app.api.ui.services.dashboard_service import CommonDashboardService
 from app.core.auth import JWTBearer
 
-
-from app.api.models.agent_model import AgentDocument
-
-
-from app.api.models.process_model import ProcessDocument
-
-# Create an APIRouter under the same prefix "/dashboard"
 router = APIRouter(tags=["dashboard"], dependencies=[Depends(JWTBearer())])
 
 
@@ -97,27 +92,11 @@ async def total_processes():
     return {"running": running, "stopped": stopped}
 
 
-@router.get("/agent-ips", summary="Get list of all agent external IPs")
-async def agent_ips():
-    """
-    Returns JSON:
-      [
-        "203.0.113.10",
-        "198.51.100.45",
-        ...
-      ]
-    (Every AgentDocument.external_ip in the database)
-    """
+@router.get("/agent-locations", summary="Get list of all agent locations")
+async def agent_ips(dashboard_service: CommonDashboardService):
     try:
-        # Project only the "external_ip" field from every agent
-        # If AgentDocument has .external_ip as field name:
-        # TODO: Please use a mongo aggregation pipeline to optimize this
-        docs = await AgentDocument.find_all().to_list()
-        ip_list = [a.external_ip for a in docs if getattr(a, "external_ip", None)]
-        print("OK")
+        return await dashboard_service.agent_locations()
     except Exception as e:
         raise InternalServerErrorException(
-            detail=f"Failed to fetch agent external_ips: {e}"
+            detail=f"Failed to fetch agent locations: {e}"
         )
-
-    return ip_list
