@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field
 
+from app.api.models.process_model import ProcessStatus
+
 
 class CommonProcessesInAgentsAggregation(BaseModel):
     name: str
@@ -27,3 +29,13 @@ class AgentLocationProjection(BaseModel):
             "longitude": "$geolocationProperties.longitude",
             "ip": "$geolocationProperties.ip",
         }
+
+
+class ProcessesStatusCount(BaseModel):
+    count: int
+    status: ProcessStatus
+
+
+class AgentsByIsOnlineAggregation(BaseModel):
+    count: int
+    id: str = Field(alias="_id")

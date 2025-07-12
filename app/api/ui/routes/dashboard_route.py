@@ -1,9 +1,6 @@
 from fastapi import APIRouter, Depends
 
 from app.api.errors.internal_server_error import InternalServerErrorException
-from app.api.models.agent_model import AgentDocument
-from app.api.models.process_model import ProcessDocument
-from app.api.ui.models.user_model import UserDocument
 from app.api.ui.services.dashboard_service import CommonDashboardService
 from app.core.auth import JWTBearer
 
@@ -29,7 +26,9 @@ async def rules_by_chain(dashboard_service: CommonDashboardService):
 
 
 @router.get("/total-agents", summary="Get total/online/offline Agent counts")
-async def total_agents():
+async def total_agents(
+    dashboard_service: CommonDashboardService,
+):
     """
     Returns JSON:
       {
@@ -39,23 +38,16 @@ async def total_agents():
       }
     """
     try:
-        total = await AgentDocument.count()
+        return await dashboard_service.agents_by_is_online()
 
-        online_count = await AgentDocument.find({"online": True}).count()
-
-        offline_count = total - online_count
     except Exception as e:
         raise InternalServerErrorException(detail=f"Failed to count agents: {e}")
 
-    return {
-        "total": total,
-        "online": online_count,
-        "offline": offline_count,
-    }
-
 
 @router.get("/total-users", summary="Get total/active/inactive User counts")
-async def total_users():
+async def total_users(
+    dashboard_service: CommonDashboardService,
+):
     """
     Returns JSON:
       {
@@ -66,7 +58,7 @@ async def total_users():
     """
 
     try:
-        total = await UserDocument.count()
+        total = await dashboard_service.users_by_is_active()
     except Exception as e:
         raise InternalServerErrorException(detail=f"Failed to count users: {e}")
 
@@ -74,8 +66,8 @@ async def total_users():
     return {"total": total, "active": total, "inactive": 0}
 
 
-@router.get("/total-processes", summary="Get counts of processes by status")
-async def total_processes():
+@router.get("/processes-by-status", summary="Get counts of processes by status")
+async def processes_by_status(dashboard_service: CommonDashboardService):
     """
     Returns JSON:
       {
@@ -84,12 +76,11 @@ async def total_processes():
       }
     """
     try:
-        running = await ProcessDocument.find({"status": "RUNNING"}).count()
-        stopped = await ProcessDocument.find({"status": "STOPPED"}).count()
+        statusses_count = await dashboard_service.processes_by_status()
     except Exception as e:
         raise InternalServerErrorException(detail=f"Failed to count processes: {e}")
 
-    return {"running": running, "stopped": stopped}
+    return statusses_count
 
 
 @router.get("/agent-locations", summary="Get list of all agent locations")
