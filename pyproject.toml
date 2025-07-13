@@ -16,6 +16,7 @@ dependencies = [
     "python-multipart (>=0.0.20,<0.0.21)",
     "faker (>=37.1.0,<38.0.0)",
     "passlib[bcrypt] (>=1.7.4,<2.0.0)",
+    "httpx (>=0.28.1,<0.29.0)",
 ]
 
 [tool.poetry.dependencies]

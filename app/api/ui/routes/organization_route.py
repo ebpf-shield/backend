@@ -3,7 +3,7 @@ from beanie import PydanticObjectId
 from fastapi import APIRouter, Body, Path
 
 from app.api.errors.conflict_exception import ConflictException
-from app.api.errors.internal_server_error import IntervalServerErrorException
+from app.api.errors.internal_server_error import InternalServerErrorException
 from app.api.errors.no_user_with_email_exception import NoUserWithEmailException
 from app.api.errors.not_found_exception import NotFoundException
 from app.api.errors.user_have_organization import UserHaveOrgException
@@ -52,4 +52,4 @@ async def create_invitation(
     except UserHaveOrgException as e:
         raise ConflictException("User already have organization") from e
     except Exception as _e:
-        raise IntervalServerErrorException
+        raise InternalServerErrorException

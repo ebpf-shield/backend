@@ -2,12 +2,17 @@ from typing import Annotated
 
 from fastapi import Depends
 
+from app.api.models.agent_model import AgentDocument
 from app.api.models.process_model import ProcessDocument
 from app.api.models.rule_model import RuleDocument
 from app.api.ui.models.dashboard_model import (
+    AgentLocationProjection,
+    AgentsByIsOnlineAggregation,
     CommonProcessesInAgentsAggregation,
+    ProcessesStatusCount,
     RulesByChainAggregation,
 )
+from app.api.ui.models.user_model import UserDocument
 
 
 class DashboardRepository:
@@ -53,6 +58,63 @@ class DashboardRepository:
             ],
             RulesByChainAggregation,
         ).to_list()
+
+    async def agent_locations(self):
+        """
+        Returns a list of all agent external IPs.
+        """
+        return (
+            await AgentDocument.find(
+                {"geolocationProperties": {"$exists": True}},
+            )
+            .project(AgentLocationProjection)
+            .to_list()
+        )
+
+    async def processes_by_status(self):
+        return await ProcessDocument.aggregate(
+            [
+                {
+                    "$group": {
+                        "_id": "$status",
+                        "count": {"$sum": 1},
+                    }
+                },
+                {
+                    "$project": {
+                        "status": "$_id",
+                        "count": 1,
+                        "_id": 0,
+                    }
+                },
+            ],
+            ProcessesStatusCount,
+        ).to_list()
+
+    async def agents_by_is_online(self):
+        return await AgentDocument.aggregate(
+            [
+                {
+                    "$addFields": {
+                        "status": {
+                            "$cond": {
+                                "if": "$online",
+                                "then": "online",
+                                "else": "offline",
+                            }
+                        }
+                    }
+                },
+                {"$group": {"_id": "$status", "count": {"$sum": 1}}},
+            ],
+            AgentsByIsOnlineAggregation,
+        ).to_list()
+
+    async def users_by_is_active(self):
+        """
+        Returns a list of users with their active status.
+        """
+        return await UserDocument.count()
 
 
 def get_dashboard_repository():
